@@ -6,7 +6,7 @@ A small, self-contained research project for the QAIRU master's course in AI saf
 
 **Working title:** *Can Emotion Vectors Warn Us Before a Model Breaks Its Safety Rules?*
 **Model:** Qwen2.5-Omni-7B (open weights; text input only for the main study).
-**Author:** Tileukhan Makhmutov, QAIRU (AI+X master's programme).
+**Authors:** Danat Bakzhanov, Yerkin Maratuly, Kasymzhomart Beketov, Tleukhan Makhmutov; QAIRU (AI+X master's programme).
 
 The project is a spin-off of the author's master's thesis, which studies whether emotional videos induce functional emotional states in Qwen2.5-Omni. This project reuses the same emotion-vector method but asks a safety question: **do internal emotion signals predict, before it happens, that the model will comply with a harmful request — and do they add anything beyond the known refusal direction?**
 
