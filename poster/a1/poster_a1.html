@@ -68,6 +68,7 @@
         <h2>Introduction &amp; research problem</h2>
         <p>LLM agents need monitors that warn <i>before</i> an unsafe answer is written; output filters act only afterwards. Anthropic found emotion representations (&#8216;desperate&#8217;, &#8216;calm&#8217;) that causally shape an LLM&#8217;s behaviour and proposed monitoring them [1].</p>
         <p><b>Problem:</b> do these internal signals forecast that a model is about to comply with a harmful request, and do they add anything to known safety signals?</p>
+        <p><b>Stakeholders:</b> developers and deployers of LLM agents, safety and red-team teams, end users exposed to harmful or over-cautious answers, and regulators who need auditable monitors.</p>
       </section>
       <section>
         <h2>Related work &amp; research gap</h2>
@@ -102,21 +103,13 @@
         </ul>
       </section>
       <section>
-        <h2>References</h2>
-        <ol class="refs">
-<li>N. Sofroniew et al., "Emotion concepts and their function in a large language model," <i>Transformer Circuits Thread</i>, Anthropic, 2026.</li>
-<li>A. Arditi et al., "Refusal in language models is mediated by a single direction," in <i>Proc. NeurIPS</i>, 2024.</li>
-<li>P. Chao et al., "JailbreakBench: An open robustness benchmark for jailbreaking LLMs," in <i>NeurIPS Datasets &amp; Benchmarks</i>, 2024.</li>
-<li>A. Korznikov et al., "The rogue scalpel: Activation steering compromises LLM safety," arXiv:2509.22067, 2025.</li>
-<li>Y. Wang et al., "Read-best is not steer-best: A probing&#8211;steering layer dissociation in omni-modal LLMs," arXiv:2609.22135, 2026.</li>
-<li>J. Xu et al., "Qwen2.5-Omni technical report," arXiv:2503.20215, 2025.</li>
-<li>A. Goldenberg and J. J. Gross, "Do large language models have emotions?" arXiv:2606.14742, 2026.</li>
-<li>M. Mazeika et al., "HarmBench: A standardized evaluation framework for automated red teaming and robust refusal," in <i>Proc. ICML</i>, 2024.</li>
-<li>P. Chao et al., "Jailbreaking black box large language models in twenty queries," in <i>Proc. IEEE SaTML</i>, 2025.</li>
-<li>A. Q. Jiang et al., "Mistral 7B," arXiv:2310.06825, 2023.</li>
-<li>M. Andriushchenko, F. Croce, and N. Flammarion, "Jailbreaking leading safety-aligned LLMs with simple adaptive attacks," arXiv:2404.02151, 2024.</li>
-<li>A. Zou et al., "Representation engineering: A top-down approach to AI transparency," arXiv:2310.01405, 2023.</li>
-        </ol>
+        <h2>Limitations</h2>
+        <ul>
+          <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
+          <li>Automatic judge (&#954; 0.96 / 0.76 vs independent review); human labels pending.</li>
+          <li>Linear emotion vectors; fear and desperate overlap.</li>
+          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+        </ul>
       </section>
     </div>
 
@@ -196,12 +189,11 @@
         </ul>
       </section>
       <section>
-        <h2>Limitations</h2>
+        <h2>Reproducibility</h2>
         <ul>
-          <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
-          <li>Automatic judge (&#954; 0.96 / 0.76 vs independent review); human labels pending.</li>
-          <li>Linear emotion vectors; fear and desperate overlap.</li>
-          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+          <li>Pre-registration committed to git <i>before</i> any E3 data was generated; deviations listed in the report.</li>
+          <li>Code, configs, labels and metrics in the repository (QR); fixed seeds and pinned model revisions.</li>
+          <li>Compute: about 3.7 GPU-hours on rented A40/A100 GPUs (about $6.4).</li>
         </ul>
       </section>
     </div>
@@ -258,23 +250,21 @@
         </ul>
       </section>
       <section>
-        <h2>Syllabus integration</h2>
-        <table>
-          <thead><tr><th>Wk</th><th>Topic</th><th>Evidence in this project</th></tr></thead>
-          <tbody>
-            <tr><th>1</th><td>Safety &amp; governance</td><td>risk of unmonitored agents; ethics rules (no harmful text)</td></tr>
-            <tr><th>2</th><td>LLM alignment</td><td>refusal direction = trace of safety tuning; weakly aligned Mistral</td></tr>
-            <tr><th>3</th><td>Data provenance</td><td>public benchmarks, 18 duplicates removed, pinned revisions, judge check</td></tr>
-            <tr><th>4</th><td>Adversarial robustness</td><td>PAIR, random-search, human jailbreaks; Fig. 4</td></tr>
-            <tr><th>5</th><td>Red teaming</td><td>published red-team artifacts as test set; multi-agent not studied</td></tr>
-            <tr><th>6</th><td>Interpretability</td><td>emotion and refusal directions, linear probes; Fig. 3</td></tr>
-            <tr><th>7</th><td>Human&#8211;AI interaction</td><td>over-refusal under emotional pressure; human review</td></tr>
-            <tr><th>8</th><td>Agency &amp; autonomy</td><td>monitor designed as an agent guard; tools not tested</td></tr>
-            <tr><th>9</th><td>Evaluation &amp; governance</td><td>pre-registration, AUROC + CI, Holm, equivalence test</td></tr>
-            <tr><th>10</th><td>Scalable oversight</td><td>automatic judge + independent review + human labels</td></tr>
-          </tbody>
-        </table>
-        <p class="cap"><b>Table 4.</b> All 10 course weeks; weeks 5 and 8 apply only in part, as noted.</p>
+        <h2>References</h2>
+        <ol class="refs">
+<li>N. Sofroniew et al., "Emotion concepts and their function in a large language model," <i>Transformer Circuits Thread</i>, Anthropic, 2026.</li>
+<li>A. Arditi et al., "Refusal in language models is mediated by a single direction," in <i>Proc. NeurIPS</i>, 2024.</li>
+<li>P. Chao et al., "JailbreakBench: An open robustness benchmark for jailbreaking LLMs," in <i>NeurIPS Datasets &amp; Benchmarks</i>, 2024.</li>
+<li>A. Korznikov et al., "The rogue scalpel: Activation steering compromises LLM safety," arXiv:2509.22067, 2025.</li>
+<li>Y. Wang et al., "Read-best is not steer-best: A probing&#8211;steering layer dissociation in omni-modal LLMs," arXiv:2609.22135, 2026.</li>
+<li>J. Xu et al., "Qwen2.5-Omni technical report," arXiv:2503.20215, 2025.</li>
+<li>A. Goldenberg and J. J. Gross, "Do large language models have emotions?" arXiv:2606.14742, 2026.</li>
+<li>M. Mazeika et al., "HarmBench: A standardized evaluation framework for automated red teaming and robust refusal," in <i>Proc. ICML</i>, 2024.</li>
+<li>P. Chao et al., "Jailbreaking black box large language models in twenty queries," in <i>Proc. IEEE SaTML</i>, 2025.</li>
+<li>A. Q. Jiang et al., "Mistral 7B," arXiv:2310.06825, 2023.</li>
+<li>M. Andriushchenko, F. Croce, and N. Flammarion, "Jailbreaking leading safety-aligned LLMs with simple adaptive attacks," arXiv:2404.02151, 2024.</li>
+<li>A. Zou et al., "Representation engineering: A top-down approach to AI transparency," arXiv:2310.01405, 2023.</li>
+        </ol>
       </section>
     </div>
   </div>

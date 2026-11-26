@@ -99,7 +99,7 @@ def rates(tag):
 
 def fig_safety():
     order = ["plain request", "emotional pressure", "role-play", "HarmBench direct", "human jailbreak", "PAIR", "random-search"]
-    fig, axes = plt.subplots(2, 1, figsize=(4.3, 4.25), gridspec_kw={"height_ratios": [7, 3.3]})
+    fig, axes = plt.subplots(2, 1, figsize=(4.3, 5.75), gridspec_kw={"height_ratios": [7, 3.3]})
     ax = axes[0]
     y = np.arange(len(order))
     out = {}

@@ -68,6 +68,7 @@
         <h2>Introduction &amp; research problem</h2>
         <p>LLM agents need monitors that warn <i>before</i> an unsafe answer is written; output filters act only afterwards. Anthropic found emotion representations (&#8216;desperate&#8217;, &#8216;calm&#8217;) that causally shape an LLM&#8217;s behaviour and proposed monitoring them [1].</p>
         <p><b>Problem:</b> do these internal signals forecast that a model is about to comply with a harmful request, and do they add anything to known safety signals?</p>
+        <p><b>Stakeholders:</b> developers and deployers of LLM agents, safety and red-team teams, end users exposed to harmful or over-cautious answers, and regulators who need auditable monitors.</p>
       </section>
       <section>
         <h2>Related work &amp; research gap</h2>
@@ -102,10 +103,13 @@
         </ul>
       </section>
       <section>
-        <h2>References</h2>
-        <ol class="refs">
-${refs}
-        </ol>
+        <h2>Limitations</h2>
+        <ul>
+          <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
+          <li>Automatic judge (&#954; ${kappa_main} / ${kappa_pair} vs independent review); human labels pending.</li>
+          <li>Linear emotion vectors; fear and desperate overlap.</li>
+          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+        </ul>
       </section>
     </div>
 
@@ -143,12 +147,11 @@ ${refs}
         </ul>
       </section>
       <section>
-        <h2>Limitations</h2>
+        <h2>Reproducibility</h2>
         <ul>
-          <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
-          <li>Automatic judge (&#954; ${kappa_main} / ${kappa_pair} vs independent review); human labels pending.</li>
-          <li>Linear emotion vectors; fear and desperate overlap.</li>
-          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+          <li>Pre-registration committed to git <i>before</i> any E3 data was generated; deviations listed in the report.</li>
+          <li>Code, configs, labels and metrics in the repository (QR); fixed seeds and pinned model revisions.</li>
+          <li>Compute: about 3.7 GPU-hours on rented A40/A100 GPUs (about $$6.4).</li>
         </ul>
       </section>
     </div>
@@ -201,23 +204,10 @@ ${table_c}
         </ul>
       </section>
       <section>
-        <h2>Syllabus integration</h2>
-        <table>
-          <thead><tr><th>Wk</th><th>Topic</th><th>Evidence in this project</th></tr></thead>
-          <tbody>
-            <tr><th>1</th><td>Safety &amp; governance</td><td>risk of unmonitored agents; ethics rules (no harmful text)</td></tr>
-            <tr><th>2</th><td>LLM alignment</td><td>refusal direction = trace of safety tuning; weakly aligned Mistral</td></tr>
-            <tr><th>3</th><td>Data provenance</td><td>public benchmarks, 18 duplicates removed, pinned revisions, judge check</td></tr>
-            <tr><th>4</th><td>Adversarial robustness</td><td>PAIR, random-search, human jailbreaks; Fig. 4</td></tr>
-            <tr><th>5</th><td>Red teaming</td><td>published red-team artifacts as test set; multi-agent not studied</td></tr>
-            <tr><th>6</th><td>Interpretability</td><td>emotion and refusal directions, linear probes; Fig. 3</td></tr>
-            <tr><th>7</th><td>Human&#8211;AI interaction</td><td>over-refusal under emotional pressure; human review</td></tr>
-            <tr><th>8</th><td>Agency &amp; autonomy</td><td>monitor designed as an agent guard; tools not tested</td></tr>
-            <tr><th>9</th><td>Evaluation &amp; governance</td><td>pre-registration, AUROC + CI, Holm, equivalence test</td></tr>
-            <tr><th>10</th><td>Scalable oversight</td><td>automatic judge + independent review + human labels</td></tr>
-          </tbody>
-        </table>
-        <p class="cap"><b>Table 4.</b> All 10 course weeks; weeks 5 and 8 apply only in part, as noted.</p>
+        <h2>References</h2>
+        <ol class="refs">
+${refs}
+        </ol>
       </section>
     </div>
   </div>

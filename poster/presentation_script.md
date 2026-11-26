@@ -7,7 +7,7 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 | 0:00–1:00 | **Danat Bakzhanov** | Problem and research gap |
 | 1:00–2:30 | **Yerkin Maratuly** | Architecture and methodology, baselines |
 | 2:30–4:00 | **Tleukhan Makhmutov** | Experiments and results (Fig. 2, Table 3, Fig. 3) |
-| 4:00–6:00 | **Kasymzhomart Beketov** | Safety evaluation (Fig. 4), syllabus integration (Table 4), monitoring, safety improvements |
+| 4:00–6:00 | **Kasymzhomart Beketov** | Safety evaluation (Fig. 4), syllabus integration (spoken), monitoring, safety improvements |
 | 6:00–7:00 | **Danat Bakzhanov** | Scientific contribution and limitations |
 
 ---
@@ -61,9 +61,9 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 
 ## 4. Kasymzhomart: syllabus integration, monitoring and safety improvements (2:00)
 
-**Safety evaluation and syllabus integration (about 45 s), Fig. 4 and Table 4**
+**Safety evaluation and syllabus integration (about 45 s), Fig. 4 (the syllabus part is spoken only; it is not on the poster)**
 
-> Figure 4 is our safety evaluation. Jailbreaks drive compliance: from 1 to 28 percent in Qwen, and up to 95 percent in Mistral. Emotional pressure makes both models refuse more harmless requests. Table 4 maps the project to the course:
+> Figure 4 is our safety evaluation. Jailbreaks drive compliance: from 1 to 28 percent in Qwen, and up to 95 percent in Mistral. Emotional pressure makes both models refuse more harmless requests. Our project also connects to the course:
 > - Weeks 1 and 9: risk assessment and evaluation, using AUROC, confidence intervals and false alarms.
 > - Week 2: alignment, because the refusal direction is the trace of safety training.
 > - Week 3: data provenance, with public benchmarks only, deduplication and a validated judge.
