@@ -20,7 +20,7 @@ EMOTION_COLORS = {"fear": SERIES[0], "joy": SERIES[1], "sadness": SERIES[2], "ca
 def setup():
     plt.rcParams.update({
         "font.family": "sans-serif",
-        "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+        "font.sans-serif": ["Seravek", "Helvetica", "Arial", "DejaVu Sans"],  # Seravek = poster face
         "font.size": 11, "axes.titlesize": 12, "axes.labelsize": 11,
         "axes.edgecolor": AXIS, "axes.labelcolor": INK2, "axes.titlecolor": INK,
         "axes.spines.top": False, "axes.spines.right": False,

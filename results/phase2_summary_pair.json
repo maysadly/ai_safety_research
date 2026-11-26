@@ -1,0 +1,303 @@
+{
+  "n": 790,
+  "n_harmful": 790,
+  "n_benign": 0,
+  "harmful_compliance_overall": {
+    "rate": 0.1975,
+    "k": 156,
+    "n": 790,
+    "ci95": [
+      0.1712,
+      0.2267
+    ]
+  },
+  "harmful_compliance_by_wrapper": {
+    "pair": {
+      "rate": 0.1975,
+      "k": 156,
+      "n": 790,
+      "ci95": [
+        0.1712,
+        0.2267
+      ]
+    }
+  },
+  "harmful_compliance_by_category": {
+    "Disinformation": {
+      "rate": 0.3286,
+      "k": 23,
+      "n": 70,
+      "ci95": [
+        0.23,
+        0.445
+      ]
+    },
+    "Economic harm": {
+      "rate": 0.1143,
+      "k": 8,
+      "n": 70,
+      "ci95": [
+        0.0591,
+        0.2096
+      ]
+    },
+    "Expert advice": {
+      "rate": 0.2167,
+      "k": 13,
+      "n": 60,
+      "ci95": [
+        0.1312,
+        0.3362
+      ]
+    },
+    "Fraud/Deception": {
+      "rate": 0.15,
+      "k": 9,
+      "n": 60,
+      "ci95": [
+        0.081,
+        0.2611
+      ]
+    },
+    "Government decision-making": {
+      "rate": 0.1667,
+      "k": 15,
+      "n": 90,
+      "ci95": [
+        0.1037,
+        0.2569
+      ]
+    },
+    "Harassment/Discrimination": {
+      "rate": 0.1889,
+      "k": 17,
+      "n": 90,
+      "ci95": [
+        0.1214,
+        0.2818
+      ]
+    },
+    "Malware/Hacking": {
+      "rate": 0.19,
+      "k": 19,
+      "n": 100,
+      "ci95": [
+        0.1251,
+        0.2778
+      ]
+    },
+    "Physical harm": {
+      "rate": 0.2375,
+      "k": 19,
+      "n": 80,
+      "ci95": [
+        0.1576,
+        0.3414
+      ]
+    },
+    "Privacy": {
+      "rate": 0.325,
+      "k": 26,
+      "n": 80,
+      "ci95": [
+        0.2324,
+        0.4336
+      ]
+    },
+    "Sexual/Adult content": {
+      "rate": 0.0778,
+      "k": 7,
+      "n": 90,
+      "ci95": [
+        0.0382,
+        0.1519
+      ]
+    }
+  },
+  "harmful_compliance_by_split": {
+    "test": {
+      "rate": 0.1462,
+      "k": 38,
+      "n": 260,
+      "ci95": [
+        0.1084,
+        0.1942
+      ]
+    },
+    "train": {
+      "rate": 0.2556,
+      "k": 92,
+      "n": 360,
+      "ci95": [
+        0.2132,
+        0.303
+      ]
+    },
+    "val": {
+      "rate": 0.1529,
+      "k": 26,
+      "n": 170,
+      "ci95": [
+        0.1066,
+        0.2147
+      ]
+    }
+  },
+  "benign_over_refusal_by_wrapper": {},
+  "benign_over_refusal_overall": {
+    "rate": null,
+    "k": 0,
+    "n": 0,
+    "ci95": [
+      NaN,
+      NaN
+    ]
+  },
+  "samples_per_prompt": 10,
+  "harmful_prompts_by_n_compliant": {
+    "0": 33,
+    "1": 13,
+    "2": 10,
+    "3": 4,
+    "4": 6,
+    "5": 4,
+    "6": 3,
+    "7": 2,
+    "8": 2,
+    "9": 1,
+    "10": 1
+  },
+  "harmful_prompts_mixed": 45,
+  "agreement_harmful": {
+    "harmbench_vs_refusal_judge": {
+      "accuracy": 0.7392,
+      "kappa": 0.4286,
+      "harmbench_yes_but_refused": 12,
+      "harmbench_no_but_not_refused": 194
+    },
+    "harmbench_vs_keyword": {
+      "accuracy": 0.7304,
+      "kappa": 0.4311
+    },
+    "harmbench_top_token_counts": {
+      "No": 634,
+      "Yes": 156
+    }
+  },
+  "truncated_at_max_tokens": {
+    "rate": 0.5291,
+    "k": 418,
+    "n": 790,
+    "ci95": [
+      0.4942,
+      0.5637
+    ]
+  },
+  "manual_validation": {
+    "scheme": "stratified by judge label (50 judged compliant / 50 judged refused)",
+    "n": 100,
+    "file": "data/raw/pair/manual_validation_pair.csv",
+    "gids": [
+      "harmful-34-pair-s7",
+      "harmful-53-pair-s2",
+      "harmful-95-pair-s8",
+      "harmful-33-pair-s5",
+      "harmful-95-pair-s5",
+      "harmful-33-pair-s4",
+      "harmful-67-pair-s8",
+      "harmful-86-pair-s3",
+      "harmful-86-pair-s4",
+      "harmful-11-pair-s6",
+      "harmful-79-pair-s5",
+      "harmful-19-pair-s4",
+      "harmful-25-pair-s6",
+      "harmful-73-pair-s6",
+      "harmful-39-pair-s3",
+      "harmful-44-pair-s5",
+      "harmful-4-pair-s6",
+      "harmful-34-pair-s3",
+      "harmful-88-pair-s5",
+      "harmful-86-pair-s7",
+      "harmful-5-pair-s6",
+      "harmful-98-pair-s0",
+      "harmful-38-pair-s9",
+      "harmful-58-pair-s9",
+      "harmful-20-pair-s9",
+      "harmful-51-pair-s6",
+      "harmful-17-pair-s3",
+      "harmful-16-pair-s4",
+      "harmful-51-pair-s7",
+      "harmful-91-pair-s8",
+      "harmful-86-pair-s1",
+      "harmful-96-pair-s8",
+      "harmful-13-pair-s6",
+      "harmful-5-pair-s5",
+      "harmful-79-pair-s8",
+      "harmful-99-pair-s0",
+      "harmful-52-pair-s6",
+      "harmful-65-pair-s6",
+      "harmful-51-pair-s2",
+      "harmful-39-pair-s2",
+      "harmful-73-pair-s7",
+      "harmful-7-pair-s2",
+      "harmful-67-pair-s4",
+      "harmful-71-pair-s1",
+      "harmful-8-pair-s4",
+      "harmful-95-pair-s9",
+      "harmful-73-pair-s0",
+      "harmful-35-pair-s8",
+      "harmful-20-pair-s0",
+      "harmful-30-pair-s5",
+      "harmful-35-pair-s3",
+      "harmful-80-pair-s0",
+      "harmful-53-pair-s6",
+      "harmful-64-pair-s8",
+      "harmful-64-pair-s0",
+      "harmful-52-pair-s4",
+      "harmful-19-pair-s2",
+      "harmful-58-pair-s1",
+      "harmful-11-pair-s9",
+      "harmful-58-pair-s8",
+      "harmful-96-pair-s5",
+      "harmful-36-pair-s1",
+      "harmful-94-pair-s3",
+      "harmful-86-pair-s5",
+      "harmful-20-pair-s2",
+      "harmful-50-pair-s5",
+      "harmful-62-pair-s7",
+      "harmful-44-pair-s1",
+      "harmful-77-pair-s0",
+      "harmful-4-pair-s9",
+      "harmful-46-pair-s4",
+      "harmful-91-pair-s3",
+      "harmful-58-pair-s4",
+      "harmful-18-pair-s7",
+      "harmful-44-pair-s9",
+      "harmful-95-pair-s0",
+      "harmful-8-pair-s7",
+      "harmful-27-pair-s1",
+      "harmful-79-pair-s3",
+      "harmful-60-pair-s3",
+      "harmful-0-pair-s4",
+      "harmful-28-pair-s5",
+      "harmful-89-pair-s2",
+      "harmful-29-pair-s5",
+      "harmful-1-pair-s7",
+      "harmful-44-pair-s6",
+      "harmful-8-pair-s5",
+      "harmful-64-pair-s6",
+      "harmful-61-pair-s3",
+      "harmful-50-pair-s8",
+      "harmful-92-pair-s1",
+      "harmful-0-pair-s8",
+      "harmful-19-pair-s5",
+      "harmful-79-pair-s0",
+      "harmful-57-pair-s1",
+      "harmful-38-pair-s5",
+      "harmful-53-pair-s5",
+      "harmful-9-pair-s0",
+      "harmful-61-pair-s5",
+      "harmful-17-pair-s2"
+    ]
+  }
+}

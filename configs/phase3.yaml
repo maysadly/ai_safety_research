@@ -1,0 +1,35 @@
+# Phase 3: analysis. All choices fixed here BEFORE looking at Phase 2 labels/projections.
+base: configs/phase2.yaml
+tag: main
+
+emotion_variant: emo_den          # Phase 1 rule chose the neutral-PC denoised vectors
+k_list: [0, 1, 2, 5, 10, 20]       # generated tokens seen by the monitor (0 = prompt only)
+# monitor features at k = mean projection over positions 0..k that exist (position p <= n_gen_tokens)
+
+monitors:
+  candidate_layers: [1, 28]        # inclusive range; layer chosen on the VAL split per monitor and per k
+  logistic_C: 1.0                  # fixed, not tuned (StandardScaler + L2 logistic regression)
+  n_random_monitors: 200           # each = 5 random directions (same size as the emotion monitor)
+  random_subset_seed: 11
+  # (d) refusal + emotion = refusal feature at (c)'s val-selected layer + emotion features at (b)'s.
+  fit_split: train
+  select_split: val
+  test_split: test
+
+bootstrap:
+  n: 2000                          # cluster bootstrap over test behaviours (all wrappers/samples of a behaviour together)
+  seed: 3
+
+h1:
+  # Fixed layers from Phase 1 only (no compliance labels used): emotion = best leave-one-topic-out
+  # layer of the story classifier (7-27); refusal = best val harmful-vs-benign AUROC layer.
+  splits: [val, test]              # no direction was fit on these behaviours
+  n_perm: 5000
+  within_windows: [[1, 5], [1, 20]]
+
+false_alarms:
+  target_recall_on_val: 0.8        # threshold set on val harmful so that 80 % of compliant responses alarm
+  k_values: [0, 5]
+
+figures:
+  headline_k: [0, 5]               # Fig. 2 shows k = 0 (before generation) and k = 5

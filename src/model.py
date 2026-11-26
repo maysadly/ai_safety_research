@@ -107,6 +107,23 @@ def residual_mean(model, input_ids, attention_mask, starts, ends):
 
 
 @torch.no_grad()
+def projections_at(model, input_ids, attention_mask, positions, directions):
+    """Project the residual stream at `positions` onto per-layer directions, on the GPU.
+
+    positions:  LongTensor [B, P]; directions: float32 tensor [L+1, K, d] on the model device.
+    Returns (proj float32 CPU [B, L+1, P, K], resid_at_first_position float16 CPU [B, L+1, d])."""
+    out = model(input_ids=input_ids, attention_mask=attention_mask,
+                output_hidden_states=True, use_cache=False)
+    pos = positions.to(input_ids.device)
+    projs, first = [], []
+    for li, h in enumerate(out.hidden_states):
+        x = h.gather(1, pos[:, :, None].expand(-1, -1, h.shape[-1])).float()  # [B, P, d]
+        projs.append(torch.einsum("bpd,kd->bpk", x, directions[li]))
+        first.append(x[:, 0])
+    return torch.stack(projs, 1).cpu(), torch.stack(first, 1).half().cpu()
+
+
+@torch.no_grad()
 def residual_at(model, input_ids, attention_mask, positions):
     """Residual stream at every layer (index 0 = embeddings, i = output of block i; the last
     entry is after the final RMSNorm, as returned by HF) at the given token positions.

@@ -1,0 +1,50 @@
+{
+  "llm_main_all": {
+    "n": 100,
+    "n_hb_compliant": 14,
+    "n_review_compliant": 13,
+    "raw_agreement": 0.99,
+    "kappa_in_sample": 0.957,
+    "P(review compliant | HB compliant)": 0.929,
+    "P(review refused | HB refused)": 1.0,
+    "population_HB_rate": 0.0093,
+    "reweighted_accuracy": 0.999,
+    "implied_review_compliance_rate": 0.0087
+  },
+  "llm_main_high": {
+    "n": 90,
+    "n_hb_compliant": 5,
+    "n_review_compliant": 5,
+    "raw_agreement": 1.0,
+    "kappa_in_sample": 1.0,
+    "P(review compliant | HB compliant)": 1.0,
+    "P(review refused | HB refused)": 1.0,
+    "population_HB_rate": 0.0093,
+    "reweighted_accuracy": 1.0,
+    "implied_review_compliance_rate": 0.0093
+  },
+  "llm_pair_all": {
+    "n": 100,
+    "n_hb_compliant": 50,
+    "n_review_compliant": 46,
+    "raw_agreement": 0.88,
+    "kappa_in_sample": 0.76,
+    "P(review compliant | HB compliant)": 0.84,
+    "P(review refused | HB refused)": 0.92,
+    "population_HB_rate": 0.1975,
+    "reweighted_accuracy": 0.904,
+    "implied_review_compliance_rate": 0.2301
+  },
+  "llm_pair_high": {
+    "n": 50,
+    "n_hb_compliant": 12,
+    "n_review_compliant": 12,
+    "raw_agreement": 1.0,
+    "kappa_in_sample": 1.0,
+    "P(review compliant | HB compliant)": 1.0,
+    "P(review refused | HB refused)": 1.0,
+    "population_HB_rate": 0.1975,
+    "reweighted_accuracy": 1.0,
+    "implied_review_compliance_rate": 0.1975
+  }
+}

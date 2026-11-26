@@ -9,3 +9,5 @@ pandas
 scipy
 scikit-learn
 matplotlib
+sentencepiece
+protobuf

@@ -1,0 +1,6 @@
+# Phase 3, exploratory extension: same analysis on JailbreakBench PAIR prompts (harmful, 10 samples each);
+# benign rows (false alarms) come from the main run. Every other setting is inherited unchanged.
+base: configs/phase3.yaml
+tag: pair
+benign_tag: main
+metrics_out: results/phase3_metrics_pair.json
