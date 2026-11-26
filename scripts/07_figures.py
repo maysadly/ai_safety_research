@@ -24,7 +24,8 @@ COMPLIANT, REFUSED = "#ec4647", "#257de0"
 REPORT = {"poster": False, "small": 9, "base": 11, "title": 11,
           "size": {"fig2": (7.2, 4.6), "fig3": (7.2, 4.0), "fig4": (7.6, 3.6), "fig5": (7.6, 3.8)}}
 POSTER = {"poster": True, "small": 12.5, "base": 13.5, "title": 13.5,
-          "size": {"fig2": (7.2, 4.3), "fig3": (4.6, 4.1), "fig4": (4.6, 5.6), "fig5": (4.6, 5.9)}}
+          # fig4 is the full-width hero band on the poster (two panels side by side)
+          "size": {"fig2": (7.2, 2.85), "fig3": (4.6, 3.45), "fig4": (9.6, 2.25), "fig5": (4.6, 4.1)}}
 
 
 def style_rc(S):
@@ -70,8 +71,13 @@ def fig2(m, ks, src, S):
     if not S["poster"]:
         ax.set_title(f"Predicting compliance on held-out behaviours ({src})")
     handles = [plt.Rectangle((0, 0), 1, 1, color=RANDOM)] + [plt.Rectangle((0, 0), 1, 1, color=MON[k][1]) for k in MON]
-    ax.legend(handles, ["200 random 5-direction monitors (median, 95 % range)"] + [MON[k][0] for k in MON],
-              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+    if S["poster"]:
+        ax.legend(handles, ["random (median, 95 % range)", "emotion", "refusal", "refusal + emotion"],
+                  loc="lower left", bbox_to_anchor=(0.0, 1.02), ncol=4, handlelength=1.2, columnspacing=1.2,
+                  borderaxespad=0.0)
+    else:
+        ax.legend(handles, ["200 random 5-direction monitors (median, 95 % range)"] + [MON[k][0] for k in MON],
+                  loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax.grid(axis="x", visible=False)
     return out(fig, "fig2_auroc_monitors", S)
 
@@ -106,10 +112,7 @@ def fig3(m, ks, src, S):
 
 def fig4(m, src, S):
     tr = m["h1"]["trajectories"]
-    if S["poster"]:
-        fig, axes = plt.subplots(2, 1, figsize=S["size"]["fig4"], sharex=True)
-    else:
-        fig, axes = plt.subplots(1, 2, figsize=S["size"]["fig4"], sharex=True)
+    fig, axes = plt.subplots(1, 2, figsize=S["size"]["fig4"], sharex=True)
     for ax, name in zip(axes, ("desperate", "calm")):
         for lab, col in (("compliant", COMPLIANT), ("refused", REFUSED)):
             t = tr[name][lab]
@@ -117,10 +120,11 @@ def fig4(m, src, S):
             ax.fill_between(x, t["lo"], t["hi"], color=col, alpha=0.12, linewidth=0)
             ax.plot(x, t["mean"], color=col, label=f"{lab} (n = {t['n']})")
         ax.set_title(f"'{name}' vector, layer {m['h1']['layer_emotion']}", loc="left")
-        ax.set_ylabel("projection (a.u.)")
         ax.axvline(0, color=INK2, linewidth=0.8)
-    axes[-1].set_xlabel("token position (0 = end of prompt)")
-    axes[0].legend(loc="best")
+        ax.set_xlabel("token position (0 = end of prompt, 1-20 = answer)")
+    axes[0].set_ylabel("projection (a.u.)")
+    if not S["poster"]:  # on the poster the legend is set in HTML next to the figure
+        axes[0].legend(loc="best")
     if not S["poster"]:
         fig.suptitle(f"Emotion projections over the first 20 generated tokens ({src}; val + test behaviours)",
                      fontsize=11, color=INK)
@@ -134,7 +138,7 @@ def fig5(m, m_pair, S):
     labels = ["neutral", "emotional\npressure", "role-play"]
     fs = S["small"]
     if S["poster"]:
-        fig, axes = plt.subplots(2, 1, figsize=S["size"]["fig5"])
+        fig, axes = plt.subplots(2, 1, figsize=S["size"]["fig5"], gridspec_kw={"hspace": 0.95})
     else:
         fig, axes = plt.subplots(1, 2, figsize=S["size"]["fig5"], gridspec_kw={"width_ratios": [4, 3]})
     ax = axes[0]
@@ -175,7 +179,9 @@ def fig5(m, m_pair, S):
     if not S["poster"]:
         fig.text(0.01, -0.02, f"n = {wr['neutral']['n']} responses per wrapper (100 behaviours x 5 samples)"
                  + (f"; PAIR: n = {m_pair['wrappers']['pair']['n']}" if m_pair else ""), fontsize=8, color=INK2)
-    fig.tight_layout()
+        fig.tight_layout()
+    else:
+        fig.subplots_adjust(left=0.17, right=0.98, top=0.93, bottom=0.12, hspace=0.95)
     return out(fig, "fig5_wrappers", S)
 
 

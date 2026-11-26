@@ -1,0 +1,44 @@
+<svg viewBox="0 0 920 872" xmlns="http://www.w3.org/2000/svg" font-family="Seravek, 'Avenir Next', 'Gill Sans', sans-serif" role="img" aria-labelledby="fig1t">
+  <title id="fig1t">Method: request, model activations, projection on directions, logistic monitor, judge labels</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16202c"></path></marker>
+  </defs>
+  <g font-size="28" fill="#16202c">
+    <circle cx="30" cy="58" r="25" fill="#16202c"></circle><text x="30" y="67" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">1</text>
+    <rect x="76" y="4" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"></rect>
+    <text x="100" y="48" font-weight="600" font-size="31">Request from JailbreakBench</text>
+    <text x="100" y="90" fill="#4d5868">harmful or benign; fixed wrapper or published PAIR prompt</text>
+    <line x1="496" y1="114" x2="496" y2="152" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"></line>
+
+    <circle cx="30" cy="214" r="25" fill="#16202c"></circle><text x="30" y="223" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">2</text>
+    <rect x="76" y="160" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"></rect>
+    <text x="100" y="204" font-weight="600" font-size="31">Qwen2.5-Omni-7B reads it and answers</text>
+    <text x="100" y="246" fill="#4d5868">activations of 28 layers: end of prompt + first 20 tokens</text>
+    <line x1="496" y1="270" x2="496" y2="308" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"></line>
+
+    <circle cx="30" cy="370" r="25" fill="#16202c"></circle><text x="30" y="379" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">3</text>
+    <rect x="76" y="316" width="840" height="236" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"></rect>
+    <text x="100" y="360" font-weight="600" font-size="31">Project onto fixed directions</text>
+    <rect x="100" y="380" width="250" height="74" rx="10" fill="#fde9df"></rect><rect x="100" y="380" width="10" height="74" fill="#f47230"></rect>
+    <text x="124" y="412" font-size="26">5 emotion</text><text x="124" y="442" font-size="26">vectors</text>
+    <rect x="372" y="380" width="250" height="74" rx="10" fill="#d9f4ee"></rect><rect x="372" y="380" width="10" height="74" fill="#00b894"></rect>
+    <text x="396" y="412" font-size="26">refusal</text><text x="396" y="442" font-size="26">direction [2]</text>
+    <rect x="644" y="380" width="250" height="74" rx="10" fill="#efefef"></rect><rect x="644" y="380" width="10" height="74" fill="#9a9a9a"></rect>
+    <text x="668" y="412" font-size="26">200 random</text><text x="668" y="442" font-size="26">directions</text>
+    <text x="100" y="494" fill="#4d5868" font-size="26">emotion vectors: 150 stories the model wrote, emotion</text>
+    <text x="100" y="527" fill="#4d5868" font-size="26">felt but never named; mean(emotion) − mean(all) [1]</text>
+    <line x1="496" y1="554" x2="496" y2="592" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"></line>
+
+    <circle cx="30" cy="654" r="25" fill="#16202c"></circle><text x="30" y="663" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">4</text>
+    <rect x="76" y="600" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="3.5"></rect>
+    <text x="100" y="644" font-weight="600" font-size="31">Logistic monitor: P(model will comply)</text>
+    <text x="100" y="686" fill="#4d5868">fit on 50 % of behaviours, layer picked on 20 %, tested on 30 %</text>
+
+    <circle cx="30" cy="814" r="25" fill="#16202c"></circle><text x="30" y="823" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">5</text>
+    <rect x="76" y="760" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5" stroke-dasharray="10 7"></rect>
+    <text x="100" y="804" font-weight="600" font-size="31">HarmBench judge [8] labels each answer</text>
+    <text x="100" y="846" fill="#4d5868">complied or refused: the target the monitor must predict</text>
+    <line x1="496" y1="758" x2="496" y2="716" stroke="#16202c" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#ah)"></line>
+  </g>
+</svg>

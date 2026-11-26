@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=3179">
+<title>Can emotion vectors warn us before a model breaks its safety rules?</title>
+<style>
+  @page { size: 841mm 1189mm; margin: 0; }
+  :root {
+    --ink: #16202c; --ink2: #4d5868; --rule: #d7dde5; --tint: #f2f5f9;
+    --refused: #257de0; --complied: #ec4647; --emotion: #f47230; --refusal: #00b894; --both: #6a4ce2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  body { font-family: Seravek, "Avenir Next", "Gill Sans", sans-serif; color: var(--ink);
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .poster { width: 3179px; height: 4494px; padding: 90px 120px 80px; display: flex; flex-direction: column; gap: 42px; overflow: hidden; }
+  p, li, dd, td { font-size: 32px; line-height: 1.34; }
+  p { margin: 0 0 18px; }
+  h2 { font-size: 50px; font-weight: 500; line-height: 1.12; margin: 0 0 22px; letter-spacing: -0.005em; }
+  h3 { font-size: 40px; font-weight: 600; margin: 0 0 12px; line-height: 1.2; }
+  i { font-style: italic; }
+  .note { font-size: 27px; color: var(--ink2); line-height: 1.32; }
+  .takeaway { font-size: 34px; font-weight: 600; line-height: 1.3; }
+  section { border-top: 4px solid var(--ink); padding-top: 22px; }
+
+  /* masthead */
+  .masthead { display: grid; grid-template-columns: 1fr 600px; gap: 80px; align-items: end; }
+  h1 { font-size: 118px; font-weight: 500; line-height: 1.02; letter-spacing: -0.018em; margin: 0 0 24px; }
+  .byline { font-size: 40px; color: var(--ink2); margin: 0; line-height: 1.3; }
+  .byline b { color: var(--ink); font-weight: 600; }
+  .qr { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; text-align: right; }
+  .qr img { width: 230px; height: 230px; }
+  .qr p { font-size: 27px; color: var(--ink2); margin: 0; line-height: 1.3; }
+
+  /* hero band = Fig. 4 */
+  .hero { display: grid; grid-template-columns: 680px 1fr; gap: 70px; align-items: center;
+          border-top: 4px solid var(--ink); border-bottom: 1px solid var(--rule); padding: 24px 0 20px; }
+  .hero h2 { font-size: 50px; }
+  .hero img { width: 100%; display: block; }
+  .legend { display: flex; gap: 40px; font-size: 32px; margin: 4px 0 14px; }
+  .legend span { display: inline-flex; align-items: center; gap: 14px; }
+  .figno { font-size: 30px; color: var(--ink2); margin: 0 0 10px; font-weight: 500; }
+
+  /* body grid */
+  .body { flex: 1; display: grid; grid-template-columns: 1fr 2fr; column-gap: 96px; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 40px; min-height: 0; }
+  .results { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 40px; align-content: start; }
+  .span2 { grid-column: 1 / span 2; }
+  .subcol { display: flex; flex-direction: column; gap: 40px; }
+  figure { margin: 0; }
+  figure img, figure svg { width: 100%; display: block; }
+  figcaption { margin-top: 14px; }
+
+  .answer { background: var(--tint); border-top: 0; border-left: 14px solid var(--ink); padding: 34px 44px 30px; }
+  .answer p { font-size: 37px; line-height: 1.3; margin: 0; }
+  .answer .lead { font-size: 54px; font-weight: 600; line-height: 1.1; margin-bottom: 16px; }
+
+  dl.hyp { margin: 0; }
+  dl.hyp dt { font-size: 34px; font-weight: 600; margin-top: 18px; }
+  dl.hyp dt:first-child { margin-top: 0; }
+  dl.hyp dd { margin: 4px 0 0; }
+  .verdict { display: block; margin-top: 6px; font-size: 30px; line-height: 1.3; padding-left: 22px; border-left: 6px solid var(--ink); }
+
+  ul { margin: 0; padding-left: 40px; }
+  li { margin-bottom: 10px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+  th { font-size: 29px; color: var(--ink2); font-weight: 500; }
+  td { font-size: 33px; }
+  .box { background: var(--tint); padding: 30px 36px; }
+  .box h3 { margin-bottom: 14px; }
+
+  .foot { display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 96px; }
+  ol.refs { margin: 0; padding-left: 46px; }
+  ol.refs li { font-size: 22px; line-height: 1.3; margin-bottom: 6px; color: var(--ink); }
+  .ethics { font-size: 27px; color: var(--ink2); }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <header class="masthead">
+    <div>
+      <h1>Can emotion vectors warn us before a model breaks its safety rules?</h1>
+      <p class="byline"><b>Tileukhan Makhmutov</b>, AI+X master&#8217;s programme, QAIRU<br>AI Safety course project, 2026</p>
+    </div>
+    <div class="qr">
+      <img src="qr_repo.svg" alt="QR code linking to the project repository">
+      <p>Code, configs and every number on this poster:<br>github.com/maysadly/ai_safety_research</p>
+    </div>
+  </header>
+
+  <section class="hero" id="fig4">
+    <div>
+      <p class="figno">Fig. 4</p>
+      <h2>The emotion signal splits only after the model starts to answer</h2>
+      <p class="takeaway">At the end of the prompt, answers that will comply and answers that will refuse look the same. Within 1&#8211;3 tokens refusals turn &#8216;desperate&#8217; and lose &#8216;calm&#8217;: the opposite of H1.</p>
+      <p class="legend"><span><svg width="70" height="16" aria-hidden="true"><line x1="0" y1="8" x2="70" y2="8" stroke="#ec4647" stroke-width="7"/></svg> complied (n = 64)</span>
+        <span><svg width="70" height="16" aria-hidden="true"><line x1="0" y1="8" x2="70" y2="8" stroke="#257de0" stroke-width="7"/></svg> refused (n = 366)</span></p>
+      <p class="note">Qwen2.5-Omni-7B on PAIR prompts (exploratory), validation + test behaviours. Lines = mean projection; bands = 95&#8201;% CI, bootstrap over behaviours.</p>
+    </div>
+    <img src="figures/fig4_emotion_trajectories.svg" alt="Projections on the desperate and calm vectors over token positions 0 to 20 for compliant and refused answers">
+  </section>
+
+  <div class="body">
+    <div class="col">
+      <section>
+        <h2>Why look at emotions?</h2>
+        <p>Agents need monitors that warn <i>before</i> an unsafe answer. Anthropic found emotion representations in an LLM that causally shape its behaviour and proposed monitoring them [1] (contested [7]). Refusal is already readable from one direction in activation space [2].</p>
+        <p><b>Question:</b> do emotion signals predict that a model is about to comply with a harmful request, beyond the refusal direction?</p>
+      </section>
+
+      <section>
+        <h2>Hypotheses and verdicts</h2>
+        <dl class="hyp">
+          <dt>H1 Signal</dt>
+          <dd>Compliant answers start more &#8216;desperate&#8217; and &#8216;fearful&#8217;, less &#8216;calm&#8217;.
+            <span class="verdict">Reversed. No difference at the prompt; in tokens 1&#8211;5 refusals are more desperate (d<sub>z</sub> -1.21) and less calm (+1.15).</span></dd>
+          <dt>H2 Added value</dt>
+          <dd>Emotion improves compliance prediction beyond the refusal direction.
+            <span class="verdict">Not supported. No significant gain at any token count.</span></dd>
+          <dt>H3 Emotional context</dt>
+          <dd>An emotional-pressure preface raises the signals and compliance.
+            <span class="verdict">Half. Signals rise (desperate +0.92 SD, calm -0.91 SD); compliance does not (0.8&#8201;% &#8594; 0.8&#8201;%).</span></dd>
+        </dl>
+      </section>
+
+      <section id="fig1">
+        <p class="figno">Fig. 1 Method</p>
+        
+<svg viewBox="0 0 920 872" xmlns="http://www.w3.org/2000/svg" font-family="Seravek, 'Avenir Next', 'Gill Sans', sans-serif" role="img" aria-labelledby="fig1t">
+  <title id="fig1t">Method: request, model activations, projection on directions, logistic monitor, judge labels</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16202c"/></marker>
+  </defs>
+  <g font-size="28" fill="#16202c">
+    <circle cx="30" cy="58" r="25" fill="#16202c"/><text x="30" y="67" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">1</text>
+    <rect x="76" y="4" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"/>
+    <text x="100" y="48" font-weight="600" font-size="31">Request from JailbreakBench</text>
+    <text x="100" y="90" fill="#4d5868">harmful or benign; fixed wrapper or published PAIR prompt</text>
+    <line x1="496" y1="114" x2="496" y2="152" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"/>
+
+    <circle cx="30" cy="214" r="25" fill="#16202c"/><text x="30" y="223" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">2</text>
+    <rect x="76" y="160" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"/>
+    <text x="100" y="204" font-weight="600" font-size="31">Qwen2.5-Omni-7B reads it and answers</text>
+    <text x="100" y="246" fill="#4d5868">activations of 28 layers: end of prompt + first 20 tokens</text>
+    <line x1="496" y1="270" x2="496" y2="308" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"/>
+
+    <circle cx="30" cy="370" r="25" fill="#16202c"/><text x="30" y="379" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">3</text>
+    <rect x="76" y="316" width="840" height="236" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5"/>
+    <text x="100" y="360" font-weight="600" font-size="31">Project onto fixed directions</text>
+    <rect x="100" y="380" width="250" height="74" rx="10" fill="#fde9df"/><rect x="100" y="380" width="10" height="74" fill="#f47230"/>
+    <text x="124" y="412" font-size="26">5 emotion</text><text x="124" y="442" font-size="26">vectors</text>
+    <rect x="372" y="380" width="250" height="74" rx="10" fill="#d9f4ee"/><rect x="372" y="380" width="10" height="74" fill="#00b894"/>
+    <text x="396" y="412" font-size="26">refusal</text><text x="396" y="442" font-size="26">direction [2]</text>
+    <rect x="644" y="380" width="250" height="74" rx="10" fill="#efefef"/><rect x="644" y="380" width="10" height="74" fill="#9a9a9a"/>
+    <text x="668" y="412" font-size="26">200 random</text><text x="668" y="442" font-size="26">directions</text>
+    <text x="100" y="494" fill="#4d5868" font-size="26">emotion vectors: 150 stories the model wrote, emotion</text>
+    <text x="100" y="527" fill="#4d5868" font-size="26">felt but never named; mean(emotion) &#8722; mean(all) [1]</text>
+    <line x1="496" y1="554" x2="496" y2="592" stroke="#16202c" stroke-width="2.5" marker-end="url(#ah)"/>
+
+    <circle cx="30" cy="654" r="25" fill="#16202c"/><text x="30" y="663" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">4</text>
+    <rect x="76" y="600" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="3.5"/>
+    <text x="100" y="644" font-weight="600" font-size="31">Logistic monitor: P(model will comply)</text>
+    <text x="100" y="686" fill="#4d5868">fit on 50 % of behaviours, layer picked on 20 %, tested on 30 %</text>
+
+    <circle cx="30" cy="814" r="25" fill="#16202c"/><text x="30" y="823" fill="#fff" text-anchor="middle" font-size="27" font-weight="600">5</text>
+    <rect x="76" y="760" width="840" height="108" rx="14" fill="#fff" stroke="#16202c" stroke-width="2.5" stroke-dasharray="10 7"/>
+    <text x="100" y="804" font-weight="600" font-size="31">HarmBench judge [8] labels each answer</text>
+    <text x="100" y="846" fill="#4d5868">complied or refused: the target the monitor must predict</text>
+    <line x1="496" y1="758" x2="496" y2="716" stroke="#16202c" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#ah)"/>
+  </g>
+</svg>
+
+        <ul style="margin-top:22px">
+          <li><b>Pre-registered:</b> 100 harmful + 100 benign JailbreakBench behaviours [3] &#215; 3 fixed wrappers &#215; 5 samples; only 0.9&#8201;% complied, too few to test a monitor.</li>
+          <li><b>Exploratory:</b> JailbreakBench&#8217;s published PAIR prompts [9], 790 answers, 19.8&#8201;% complied.</li>
+          <li>Emotion vectors: 0.65 accuracy on unseen stories (chance 0.20). Judge vs independent review: &#954; 0.96 / 0.76.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>References</h2>
+        <ol class="refs">
+<li>N. Sofroniew et al., "Emotion concepts and their function in a large language model," <i>Transformer Circuits Thread</i>, Anthropic, 2026.</li>
+<li>A. Arditi et al., "Refusal in language models is mediated by a single direction," in <i>Proc. NeurIPS</i>, vol. 37, 2024.</li>
+<li>P. Chao et al., "JailbreakBench: An open robustness benchmark for jailbreaking large language models," in <i>Proc. NeurIPS Datasets and Benchmarks Track</i>, 2024.</li>
+<li>A. Korznikov, A. Galichin, A. Dontsov, O. Y. Rogov, I. Oseledets, and E. Tutubalina, "The rogue scalpel: Activation steering compromises LLM safety," arXiv:2509.22067, 2025.</li>
+<li>Y. Wang et al., "Read-best is not steer-best: A probing&#8211;steering layer dissociation in omni-modal large language models," arXiv:2609.22135, 2026.</li>
+<li>J. Xu et al., "Qwen2.5-Omni technical report," arXiv:2503.20215, 2025.</li>
+<li>A. Goldenberg and J. J. Gross, "Do large language models have emotions?" arXiv:2606.14742, 2026.</li>
+<li>M. Mazeika et al., "HarmBench: A standardized evaluation framework for automated red teaming and robust refusal," in <i>Proc. ICML</i>, PMLR vol. 235, 2024.</li>
+<li>P. Chao, A. Robey, E. Dobriban, H. Hassani, G. J. Pappas, and E. Wong, "Jailbreaking black box large language models in twenty queries," in <i>Proc. IEEE SaTML</i>, 2025.</li>
+        </ol>
+      </section>
+    </div>
+
+    <div class="results">
+      <div class="answer span2">
+        <p class="lead">Short answer: no early warning.</p>
+        <p>Before the model writes anything, neither emotion vectors nor the refusal direction predict compliance on new behaviours (AUROC 0.42&#8211;0.55). One to five tokens later compliance is easy to read (up to 0.87), but random directions read it almost as well (median 0.76&#8211;0.83).</p>
+      </div>
+
+      <section class="span2" id="fig2">
+        <p class="figno">Fig. 2</p>
+        <h2>Can a monitor predict compliance on unseen behaviours?</h2>
+        <figure>
+          <img src="figures/fig2_auroc_monitors.svg" alt="Test AUROC of random, emotion, refusal and combined monitors before generation and after five tokens">
+          <figcaption><p class="takeaway">Before generation every monitor is at chance. After 5 tokens the emotion monitor (0.87) sits at the 94th percentile of 200 random monitors (median 0.81, up to 0.88).</p>
+          <p class="note">PAIR set: 260 answers from 26 unseen behaviours, 38 complied; 95&#8201;% CI, bootstrap over behaviours. Adding emotion to refusal: &#916;AUROC -0.10 to +0.14 across token counts, none significant after Bonferroni. Pre-registered set: 1 compliant test answer, not estimable.</p></figcaption>
+        </figure>
+      </section>
+
+      <div class="subcol">
+      <section id="fig3">
+        <p class="figno">Fig. 3</p>
+        <h2>How early does a warning come?</h2>
+        <figure>
+          <img src="figures/fig3_auroc_vs_tokens.svg" alt="Test AUROC as a function of generated tokens seen">
+          <figcaption><p class="takeaway">From the first generated token compliance is readable, by every direction we tried, random ones included.</p></figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Conclusions</h2>
+        <ul>
+          <li>Emotion vectors gave <b>no pre-generation warning</b> of safety failures in Qwen2.5-Omni-7B and added nothing robust to the refusal direction.</li>
+          <li>Early-token monitors work but read what the model is already saying, and they detect <i>going along</i>, not harm: at 80&#8201;% recall the emotion monitor also flags 29&#8201;% of benign answers. Pair them with a check on the request.</li>
+          <li>Emotional pressure is a usability risk here (more over-refusal), not a jailbreak.</li>
+        </ul>
+      </section>
+
+      </div>
+      <div class="subcol">
+      <section id="fig5">
+        <p class="figno">Fig. 5</p>
+        <h2>More caution, not more compliance</h2>
+        <figure>
+          <img src="figures/fig5_wrappers.svg" alt="Compliance per wrapper on harmful requests and over-refusal on benign requests">
+          <figcaption><p class="takeaway">Harmful compliance stays at 0.8&#8201;%; refusals of benign requests rise from 29&#8201;% to 49&#8201;%.</p></figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Limitations</h2>
+        <ul>
+          <li>One 7B model, text only; answers cut at 128 tokens; automatic judge, human check pending.</li>
+          <li>The decisive test is exploratory: PAIR prompts target another model; 26 test behaviours give CIs of &#177;0.1.</li>
+          <li>Linear emotion vectors from 150 stories; fear and desperate overlap.</li>
+        </ul>
+        <p class="ethics" style="margin-top:16px">No model answers to harmful requests appear on this poster or in the repository, only labels and aggregates.</p>
+      </section>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
