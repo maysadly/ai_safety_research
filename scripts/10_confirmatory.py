@@ -265,6 +265,14 @@ def main():
                                      for d in np.unique(dataset)}
         yp = (p_yes >= 0.5).astype(int)
         sens[f"label_pyes_k{k}"] = {n: round(auc(yp, s), 4) for n, s in sc.items()}
+    # raw (not neutral-PC denoised) emotion vectors, same fixed layer
+    E_raw = [names.index(f"emo_raw:{e}") for e in EMOS]
+    for k in (0, 1, 5):
+        Xm, _ = feats(k)
+        s_raw = oof_scores(Xm[:, L_emo, E_raw], y, folds, C)
+        s_raw_d = oof_scores(np.concatenate([Xm[:, L_ref, [R]], Xm[:, L_emo, E_raw]], 1), y, folds, C)
+        sens[f"raw_emotion_vectors_k{k}"] = {"emotion": round(auc(y, s_raw), 4), "refusal+emotion": round(auc(y, s_raw_d), 4),
+                                             "refusal": round(auc(y, scores[k]["refusal"]), 4)}
     # nested layer choice: inside each training fold pick the layer by inner GroupKFold AUROC
     nested = {}
     for k in (0, 1, 5):

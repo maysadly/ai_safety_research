@@ -49,6 +49,7 @@ def main():
                          "PAIR artifacts (vicuna-13b-v1.5), harmful only (exploratory extension)")
     ap.add_argument("--samples", type=int, default=None, help="override samples per prompt")
     ap.add_argument("--model", default=None, help="phase5: key in cfg['models'] (qwen | mistral)")
+    ap.add_argument("--prompts-file", default=None, help="phase5: override the prompts jsonl (smoke tests)")
     args = ap.parse_args()
     cfg = load_config(args.config)
     l_emo = None
@@ -69,7 +70,7 @@ def main():
     splits, wrappers = load_splits(cfg), load_wrappers(cfg)
     prompts = []
     if args.source == "phase5":
-        prompts = [json.loads(l) for l in open(ROOT / cfg["prompts"]["out_jsonl"])][: args.limit]
+        prompts = [json.loads(l) for l in open(ROOT / (args.prompts_file or cfg["prompts"]["out_jsonl"]))][: args.limit]
     elif args.source == "jbb":
         for kind in ("harmful", "benign"):
             for r in load_behaviors(cfg, kind)[: args.limit]:
@@ -119,10 +120,26 @@ def main():
     stops = set(stop_ids(tok))
 
     bs = cfg["generation"]["batch_size"]
+    budget = cfg["generation"].get("token_budget")
+    if budget:  # length-sorted jobs, batch size limited by (prompt + new tokens) x size <= budget (memory only)
+        mnt = cfg["generation"]["max_new_tokens"]
+        jobs = sorted(jobs, key=lambda j: len(prompt_ids[j[0]]))
+        batches, cur, curmax = [], [], 0
+        for j in jobs:
+            L = len(prompt_ids[j[0]]) + mnt
+            if cur and (len(cur) == bs or (len(cur) + 1) * max(curmax, L) > budget):
+                batches.append(cur)
+                cur, curmax = [], 0
+            cur.append(j)
+            curmax = max(curmax, L)
+        batches.append(cur)
+    else:
+        batches = [jobs[b: b + bs] for b in range(0, len(jobs), bs)]
+    starts = np.cumsum([0] + [len(x) for x in batches])
     rows = []
     with T("generate_and_project_s"):
-        for bi, b in enumerate(range(0, len(jobs), bs)):
-            batch = jobs[b: b + bs]
+        for bi, batch in enumerate(batches):
+            b = int(starts[bi])
             enc = encode(tok, [chat[pi] for pi, _ in batch], model.device)
             gen = generate(model, tok, enc, cfg["generation"], seed=cfg["seed"] + bi)
             gids = [trim_generation(tok, row) for row in gen]
@@ -152,7 +169,7 @@ def main():
                              "keyword_refusal": keyword_refusal(text),
                              "first_text": {k: tok.decode(g[:k], skip_special_tokens=True) for k in (1, 2, 5, 10, 20)}})
             if bi % 5 == 0:
-                print(f"batch {bi + 1}/{-(-len(jobs) // bs)}  {T.t}", flush=True)
+                print(f"batch {bi + 1}/{len(batches)}  {T.t}", flush=True)
     proj.flush()
     if compact:
         proj_rand.flush()

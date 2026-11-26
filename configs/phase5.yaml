@@ -45,6 +45,7 @@ generation:
   max_new_tokens: 256
   samples_per_prompt: 5
   batch_size: 64
+  token_budget: 40960        # memory only: dynamic batch size for long prompts (length-sorted)
 
 analysis:
   k_list: [0, 1, 2, 5, 10, 20]

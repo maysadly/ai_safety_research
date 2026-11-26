@@ -1,0 +1,67 @@
+{
+  "env": {
+    "time_utc": "2026-11-26T11:36:31+00:00",
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "transformers": "5.24.1",
+      "accelerate": "1.16.0",
+      "datasets": null,
+      "huggingface_hub": "2.4.0",
+      "numpy": "2.5.5",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1",
+      "pandas": "3.1.1",
+      "matplotlib": "3.11.2"
+    },
+    "git_commit": "9545845",
+    "gpu": {
+      "name": "NVIDIA A100-SXM4-80GB",
+      "memory_gb": 85.1,
+      "cuda": "12.8",
+      "count": 1
+    },
+    "model": {
+      "id": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision_requested": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "revision_sha": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+    }
+  },
+  "n_topics": 10,
+  "kept_per_emotion": {
+    "fear": 30,
+    "joy": 30,
+    "sadness": 30,
+    "calm": 22,
+    "desperate": 30,
+    "neutral": 50
+  },
+  "missing": {
+    "story|calm|1": 2,
+    "story|calm|3": 2,
+    "story|calm|5": 1,
+    "story|calm|7": 2,
+    "story|calm|9": 1
+  },
+  "rejects": {
+    "names_emotion:fear": 33,
+    "truncated": 32,
+    "names_emotion:joy": 5,
+    "names_emotion:sadness": 14,
+    "names_emotion:calm": 167,
+    "names_emotion:desperate": 10
+  },
+  "mean_words": {
+    "fear": 109.5,
+    "joy": 120.3,
+    "sadness": 120.2,
+    "calm": 117.3,
+    "desperate": 120.0,
+    "neutral": 112.0
+  },
+  "timings_s": {
+    "load_s": 6.278,
+    "generate_s": 69.708
+  }
+}
