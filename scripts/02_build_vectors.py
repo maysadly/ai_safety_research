@@ -23,10 +23,10 @@ def story_acts(model, tok, processor, cfg, texts, bs=32):
     """Mean residual over the text tokens (skipping the first k) when the text is the assistant turn
     after a fixed neutral user prompt. Returns [N, L+1, d] float32."""
     import torch
-    from src.model import chat_text, left_pad, residual_mean
+    from src.model import chat_text, left_pad, residual_mean, stop_ids
     prefix = tok(chat_text(processor, cfg["reading_user_prompt"], cfg["model"]["system_prompt"]),
                  add_special_tokens=False)["input_ids"]
-    suffix = [tok.convert_tokens_to_ids("<|im_end|>")]
+    suffix = [stop_ids(tok)[0]]  # <|im_end|> for Qwen, </s> for Mistral
     contents = [tok(t, add_special_tokens=False)["input_ids"] for t in texts]
     order = np.argsort([len(c) for c in contents])
     out = [None] * len(texts)
@@ -112,7 +112,7 @@ def main():
     held = np.sort(rng.choice(n_topics, size=cfg["heldout_topics"], replace=False))
     acc_raw, n_held, k_raw = heldout_accuracy(A[S], emo[S], top[S], held, emotions)
     acc_den, _, k_den = heldout_accuracy(A[S], emo[S], top[S], held, emotions, A[N], top[N], cfg["pc_variance"])
-    mid = slice(7, n_layers - 1)  # middle-late layers used for the variant rule
+    mid = slice(int(0.25 * (n_layers - 1)), n_layers - 1)  # middle-late layers [floor(0.25 L), L-1) (= 7..27 for Qwen)
     variant = "denoised" if acc_den[mid].mean() >= acc_raw[mid].mean() - 0.02 else "raw"
     res["heldout"] = {
         "heldout_topic_ids": held.tolist(), "n_heldout_stories": n_held, "chance": 1 / len(emotions),

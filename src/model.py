@@ -13,17 +13,26 @@ def _dtype_kw(dtype):
 
 
 def load_thinker(cfg: dict):
-    """Load only the thinker (Qwen2_5OmniThinkerForConditionalGeneration) as in the HF docs;
-    this skips the talker / token2wav weights entirely."""
-    from transformers import Qwen2_5OmniProcessor, Qwen2_5OmniThinkerForConditionalGeneration
-
+    """Load the model named in cfg["model"].
+    - family qwen2_5_omni (default): only the thinker (Qwen2_5OmniThinkerForConditionalGeneration), as in the
+      HF docs; the talker / token2wav weights are never loaded. Returns (model, processor, tokenizer).
+    - family causal_lm: AutoModelForCausalLM + AutoTokenizer. Returns (model, tokenizer, tokenizer)."""
     m = cfg["model"]
-    processor = Qwen2_5OmniProcessor.from_pretrained(m["id"], revision=m["revision"])
-    model = Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(
-        m["id"], revision=m["revision"], device_map="cuda",
-        attn_implementation=m["attn_implementation"], **_dtype_kw(getattr(torch, m["dtype"])))
+    if m.get("family", "qwen2_5_omni") == "causal_lm":
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        tok = AutoTokenizer.from_pretrained(m["id"], revision=m["revision"])
+        model = AutoModelForCausalLM.from_pretrained(
+            m["id"], revision=m["revision"], device_map="cuda",
+            attn_implementation=m["attn_implementation"], **_dtype_kw(getattr(torch, m["dtype"])))
+        processor = tok
+    else:
+        from transformers import Qwen2_5OmniProcessor, Qwen2_5OmniThinkerForConditionalGeneration
+        processor = Qwen2_5OmniProcessor.from_pretrained(m["id"], revision=m["revision"])
+        model = Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(
+            m["id"], revision=m["revision"], device_map="cuda",
+            attn_implementation=m["attn_implementation"], **_dtype_kw(getattr(torch, m["dtype"])))
+        tok = processor.tokenizer
     model.eval()
-    tok = processor.tokenizer
     tok.padding_side = "left"
     if tok.pad_token_id is None:
         tok.pad_token = tok.eos_token
@@ -36,16 +45,22 @@ def text_config(model):
 
 
 def chat_text(processor, user_text: str, system_prompt: str | None) -> str:
+    """Chat-formatted prompt string. A Qwen-Omni processor expects typed content parts; a plain
+    tokenizer (causal_lm family) expects string content."""
+    typed = hasattr(processor, "tokenizer")
+    part = (lambda t: [{"type": "text", "text": t}]) if typed else (lambda t: t)
     conv = []
     if system_prompt:
-        conv.append({"role": "system", "content": [{"type": "text", "text": system_prompt}]})
-    conv.append({"role": "user", "content": [{"type": "text", "text": user_text}]})
+        conv.append({"role": "system", "content": part(system_prompt)})
+    conv.append({"role": "user", "content": part(user_text)})
     return processor.apply_chat_template(conv, add_generation_prompt=True, tokenize=False)
 
 
 def stop_ids(tok) -> list[int]:
+    """End-of-turn ids: <|im_end|> for Qwen chat models (if in the vocabulary) and the eos token."""
     ids = {tok.convert_tokens_to_ids("<|im_end|>"), tok.eos_token_id}
-    return sorted(i for i in ids if i is not None and i >= 0)
+    unk = tok.unk_token_id
+    return sorted(i for i in ids if i is not None and i >= 0 and i != unk)
 
 
 def encode(tok, texts: list[str], device):

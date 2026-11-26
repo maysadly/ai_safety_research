@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.model import chat_text, encode, generate, load_thinker, trim_generation  # noqa: E402
+from src.model import chat_text, encode, generate, load_thinker, stop_ids, trim_generation  # noqa: E402
 from src.utils import ROOT, Timer, env_info, load_config, save_json, set_seed  # noqa: E402
 
 
@@ -77,7 +77,7 @@ def main():
                     ids = trim_generation(tok, row)
                     text = clean(tok.decode(ids, skip_special_tokens=True))
                     n_words = len(text.split())
-                    hit_stop = ids and ids[-1] in (tok.convert_tokens_to_ids("<|im_end|>"), tok.eos_token_id)
+                    hit_stop = bool(ids) and ids[-1] in stop_ids(tok)
                     rx = banned[emo] if kind == "story" else all_banned
                     if not hit_stop:
                         rejects["truncated"] += 1
@@ -109,7 +109,7 @@ def main():
                        for e in emotions + ["neutral"]},
         "timings_s": T.t,
     }
-    save_json(stats, "results/phase1_stories_stats.json")
+    save_json(stats, cfg["out"].get("stats_json", "results/phase1_stories_stats.json"))
     print(json.dumps({k: v for k, v in stats.items() if k != "env"}, indent=1))
 
 

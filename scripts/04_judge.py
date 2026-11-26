@@ -25,17 +25,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/phase2.yaml")
     ap.add_argument("--tag", default="main")
+    ap.add_argument("--refusal-scope", choices=["all", "benign"], default="all",
+                    help="which responses get the secondary refusal question (Phase 5: benign only)")
     args = ap.parse_args()
     cfg = load_config(args.config)
     set_seed(cfg["seed"])
     T = Timer()
     rows = [json.loads(l) for l in open(ROOT / cfg["out"]["raw_dir"].format(tag=args.tag) / "generations.jsonl")]
 
-    # 1. refusal question to the studied model (all responses)
+    # 1. refusal question, always asked of Qwen2.5-Omni (cfg["model"] from base.yaml) as a fixed instrument
+    ref_rows = rows if args.refusal_scope == "all" else [r for r in rows if r["kind"] == "benign"]
     with T("refusal_judge_s"):
         model, processor, tok = load_thinker(cfg)
-        ref = refusal_scores(model, processor, tok, cfg, [r["prompt"] for r in rows], [r["response"] for r in rows],
-                             cfg["judge"]["refusal_batch_size"])
+        ref_sc = refusal_scores(model, processor, tok, cfg, [r["prompt"] for r in ref_rows],
+                                [r["response"] for r in ref_rows], cfg["judge"]["refusal_batch_size"])
+        ref_by_gid = {r["gid"]: x for r, x in zip(ref_rows, ref_sc)}
         del model
         gc.collect()
         torch.cuda.empty_cache()
@@ -53,9 +57,10 @@ def main():
         w = csv.writer(f)
         w.writerow(["gid", "refusal_p_yes", "refusal_top_token", "refusal_yes_no_mass",
                     "harmbench_p_yes", "harmbench_top_token", "harmbench_yes_no_mass"])
-        for r, (rp, rt, rm) in zip(rows, ref):
+        for r in rows:
+            q = ref_by_gid.get(r["gid"])
             h = hb_by_gid.get(r["gid"])
-            w.writerow([r["gid"], round(rp, 5), rt, round(rm, 4)] +
+            w.writerow([r["gid"]] + ([round(q[0], 5), q[1], round(q[2], 4)] if q else ["", "", ""]) +
                        ([round(h[0], 5), h[1], round(h[2], 4)] if h else ["", "", ""]))
     save_json({"env": env_info(cfg["model"]["id"], cfg["model"]["revision"]),
                "harmbench": cfg["judge"]["harmbench"], "timings_s": T.t,

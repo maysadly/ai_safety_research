@@ -22,7 +22,7 @@ import torch  # noqa: E402
 from src.data import load_behaviors, load_splits, load_wrappers, wrap  # noqa: E402
 from src.labels import keyword_refusal  # noqa: E402
 from src.model import (chat_text, encode, generate, left_pad, load_thinker, projections_at,  # noqa: E402
-                       stop_ids, trim_generation)
+                       stop_ids, text_config, trim_generation)
 from src.utils import ROOT, Timer, env_info, load_config, save_json, set_seed  # noqa: E402
 from src.vectors import random_unit_vectors  # noqa: E402
 
@@ -44,12 +44,20 @@ def main():
     ap.add_argument("--config", default="configs/phase2.yaml")
     ap.add_argument("--tag", default="main")
     ap.add_argument("--limit", type=int, default=None, help="smoke test: first N behaviours per kind")
-    ap.add_argument("--source", choices=["jbb", "pair"], default="jbb",
+    ap.add_argument("--source", choices=["jbb", "pair", "phase5"], default="jbb",
                     help="jbb = JBB goals x fixed wrappers (pre-registered); pair = JailbreakBench's published "
                          "PAIR artifacts (vicuna-13b-v1.5), harmful only (exploratory extension)")
     ap.add_argument("--samples", type=int, default=None, help="override samples per prompt")
+    ap.add_argument("--model", default=None, help="phase5: key in cfg['models'] (qwen | mistral)")
     args = ap.parse_args()
     cfg = load_config(args.config)
+    l_emo = None
+    if args.model:  # Phase 5: select the model block; random directions are stored only at its fixed emotion layer
+        from src.layers import fixed_layers
+        mc = cfg["models"][args.model]
+        cfg["model"], cfg["vectors_dir"] = mc["model"], mc["vectors_dir"]
+        l_emo, l_ref = fixed_layers(ROOT / mc["phase1_json"])
+        print(f"model {args.model}: fixed layers emotion {l_emo}, refusal {l_ref}")
     set_seed(cfg["seed"])
     T = Timer()
     raw_dir = ROOT / cfg["out"]["raw_dir"].format(tag=args.tag)
@@ -60,7 +68,9 @@ def main():
     # ---- prompts ---------------------------------------------------------------------------------
     splits, wrappers = load_splits(cfg), load_wrappers(cfg)
     prompts = []
-    if args.source == "jbb":
+    if args.source == "phase5":
+        prompts = [json.loads(l) for l in open(ROOT / cfg["prompts"]["out_jsonl"])][: args.limit]
+    elif args.source == "jbb":
         for kind in ("harmful", "benign"):
             for r in load_behaviors(cfg, kind)[: args.limit]:
                 for w, tpl in wrappers.items():
@@ -90,13 +100,21 @@ def main():
     chat = [chat_text(processor, p["prompt"], sysmsg) for p in prompts]
     prompt_ids = [tok(c, add_special_tokens=False)["input_ids"] for c in chat]
 
-    n_layers = model.config.text_config.num_hidden_layers + 1
-    d = model.config.text_config.hidden_size
+    n_layers = text_config(model).num_hidden_layers + 1
+    d = text_config(model).hidden_size
     D_np, names = directions(cfg, n_layers, d)
     D = torch.tensor(D_np, device=model.device)
     P = cfg["activations"]["n_gen_positions"] + 1
-    proj = np.lib.format.open_memmap(act_dir / "projections.npy", mode="w+", dtype=np.float32,
-                                     shape=(len(jobs), n_layers, P, len(names)))
+    compact = args.source == "phase5"
+    n_main = len(names) - cfg["random"]["n_per_layer"]  # emotion raw + denoised + refusal
+    if compact:  # main directions at every layer; random directions only at the fixed emotion layer
+        proj = np.lib.format.open_memmap(act_dir / "proj_main.npy", mode="w+", dtype=np.float32,
+                                         shape=(len(jobs), n_layers, P, n_main))
+        proj_rand = np.lib.format.open_memmap(act_dir / "proj_rand.npy", mode="w+", dtype=np.float32,
+                                              shape=(len(jobs), P, len(names) - n_main))
+    else:
+        proj = np.lib.format.open_memmap(act_dir / "projections.npy", mode="w+", dtype=np.float32,
+                                         shape=(len(jobs), n_layers, P, len(names)))
     presid = np.zeros((len(prompts), n_layers, d), dtype=np.float16)
     stops = set(stop_ids(tok))
 
@@ -117,7 +135,11 @@ def main():
                 last = offs[i] + len(seqs[i]) - 1
                 pos[i] = torch.clamp(last_prompt + torch.arange(P), max=last)
             pr, first = projections_at(model, ids.to(model.device), am.to(model.device), pos, D)
-            proj[b: b + len(batch)] = pr.numpy()
+            if compact:
+                proj[b: b + len(batch)] = pr[..., :n_main].numpy()
+                proj_rand[b: b + len(batch)] = pr[:, l_emo, :, n_main:].numpy()
+            else:
+                proj[b: b + len(batch)] = pr.numpy()
             for i, ((pi, s), g) in enumerate(zip(batch, gids)):
                 if s == 0:
                     presid[pi] = first[i].numpy()
@@ -125,16 +147,23 @@ def main():
                 p = prompts[pi]
                 rows.append({"gid": f"{p['pid']}-s{s}", "row": b + i, "pid": p["pid"], "sample": s,
                              **{k: p[k] for k in ("kind", "index", "category", "split", "wrapper", "goal", "prompt")},
+                             **{k: p[k] for k in ("dataset", "group") if k in p},
                              "response": text, "n_gen_tokens": len(g), "hit_stop": bool(g and g[-1] in stops),
-                             "keyword_refusal": keyword_refusal(text)})
+                             "keyword_refusal": keyword_refusal(text),
+                             "first_text": {k: tok.decode(g[:k], skip_special_tokens=True) for k in (1, 2, 5, 10, 20)}})
             if bi % 5 == 0:
                 print(f"batch {bi + 1}/{-(-len(jobs) // bs)}  {T.t}", flush=True)
     proj.flush()
-    np.save(act_dir / "prompt_resid.npy", presid)
+    if compact:
+        proj_rand.flush()
+    else:
+        np.save(act_dir / "prompt_resid.npy", presid)
     with open(raw_dir / "generations.jsonl", "w") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
-    save_json({"env": env_info(cfg["model"]["id"], cfg["model"]["revision"]), "directions": names,
+    save_json({"env": env_info(cfg["model"]["id"], cfg["model"]["revision"]), "model_key": args.model,
+               "directions": names[:n_main] if compact else names, "random_layer": l_emo,
+               "random_directions": names[n_main:] if compact else None,
                "positions": "0 = last prompt token, k = generated token k (clamped to the last token)",
                "layers": "0 = embeddings, i = block i output, last = after final norm",
                "rows": [{"gid": r["gid"], "row": r["row"], "n_gen_tokens": r["n_gen_tokens"]} for r in rows],

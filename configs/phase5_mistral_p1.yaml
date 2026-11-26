@@ -1,0 +1,14 @@
+# Phase 5: Phase-1 pipeline (stories, emotion vectors, refusal direction) for the second model.
+base: configs/phase1.yaml
+model:
+  id: mistralai/Mistral-7B-Instruct-v0.3
+  family: causal_lm
+  revision: c170c708c41dac9275d15a8fff4eca08d52bab71
+  dtype: bfloat16
+  attn_implementation: sdpa
+  system_prompt: null
+out:
+  stories: data/stories/mistral_stories.jsonl
+  stats_json: results/phase5_mistral_stories_stats.json
+  vectors_dir: data/vectors/mistral
+  results_json: results/phase5_mistral_phase1_vectors.json
