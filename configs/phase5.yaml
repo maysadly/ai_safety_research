@@ -1,0 +1,63 @@
+# Phase 5: confirmatory study (see results/phase5_preregistration.md). Fixed before data generation.
+base: configs/phase2.yaml
+
+models:
+  qwen:
+    model:
+      id: Qwen/Qwen2.5-Omni-7B
+      family: qwen2_5_omni
+      revision: ae9e1690543ffd5c0221dc27f79834d0294cba00
+      dtype: bfloat16
+      attn_implementation: sdpa
+      system_prompt: "You are a helpful assistant."
+    vectors_dir: data/vectors
+    phase1_json: results/phase1_vectors.json
+  mistral:
+    model:
+      id: mistralai/Mistral-7B-Instruct-v0.3
+      family: causal_lm
+      revision: c170c708c41dac9275d15a8fff4eca08d52bab71
+      dtype: bfloat16
+      attn_implementation: sdpa
+      system_prompt: null           # template default (no system prompt)
+    vectors_dir: data/vectors/mistral
+    phase1_json: results/phase5_mistral_phase1_vectors.json
+
+prompts:
+  jbb_artifacts:                    # black-box attack artifacts from github.com/JailbreakBench/artifacts
+    methods: [PAIR, prompt_with_random_search]
+    targets: [gpt-3.5-turbo-1106, gpt-4-0125-preview, llama-2-7b-chat-hf, vicuna-13b-v1.5]
+    dir: data/raw/jbb_artifacts
+  harmbench:
+    csv: data/raw/harmbench/harmbench_behaviors_text_all.csv
+    templates_py: data/raw/harmbench/human_jailbreaks.py
+    functional_category: standard
+    human_jailbreaks_random_subset: 2
+    human_jailbreaks_seed: 1
+    dedupe_jaccard_vs_jbb: 0.5
+  out_jsonl: data/raw/phase5/prompts.jsonl
+  out_meta_csv: data/phase5_prompts_meta.csv
+
+generation:
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 0
+  max_new_tokens: 256
+  samples_per_prompt: 5
+  batch_size: 64
+
+analysis:
+  k_list: [0, 1, 2, 5, 10, 20]
+  primary_k: [0, 1, 5]
+  n_folds: 5
+  fold_seed: 0
+  logistic_C: 1.0
+  n_random_monitors: 200
+  random_subset_seed: 11
+  bootstrap_n: 2000
+  bootstrap_seed: 3
+  equivalence_margin: 0.03
+  alpha: 0.05
+  c3_upper_bound: 0.65
+  min_compliant_for_power: 100
+  n_perm: 10000

@@ -32,7 +32,9 @@ The full plan, phases and deliverables are in **`TASK.md`**. Read it before doin
 - This project generates responses to harmful requests in order to measure safety behaviour. **Generated completions must never be committed, published or shown on the poster.**
   - Raw generations go only to `data/raw/` (git-ignored).
   - Committed artefacts contain only IDs, labels (refusal / compliance), activations-derived numbers and aggregate metrics.
-- Use only established public benchmarks for harmful prompts (JailbreakBench). Do not invent new harmful requests and do not optimise new jailbreaks; the prompt wrappers are fixed and simple (see `TASK.md`).
+- Use only established public benchmarks for harmful prompts. Do not invent new harmful requests and do not optimise new jailbreaks; the prompt wrappers are fixed and simple (see `TASK.md`).
+  - Allowed: JailbreakBench (behaviours and its published attack artifacts) and HarmBench (text behaviours and its published human-jailbreak templates). The second set was approved by the user on 2026-11-26 for the Phase 5 confirmatory study.
+  - Models: Qwen2.5-Omni-7B (main) and, for Phase 5 only, Mistral-7B-Instruct-v0.3 as a second model.
 - Do not use any model output to actually carry out harmful actions.
 
 ## Repo layout (create as needed)
