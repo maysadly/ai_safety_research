@@ -8,7 +8,7 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 | 1:00–2:30 | **Yerkin Maratuly** | Architecture and methodology, baselines |
 | 2:30–4:00 | **Tleukhan Makhmutov** | Experiments and results (Fig. 2, Table 3, Fig. 3) |
 | 4:00–6:00 | **Kasymzhomart Beketov** | Safety evaluation (Fig. 4), syllabus integration (spoken), monitoring, safety improvements |
-| 6:00–7:00 | **Danat Bakzhanov** | Scientific contribution and limitations |
+| 6:00–7:00 | **Tleukhan Makhmutov** | Scientific contribution and limitations |
 
 ---
 
@@ -83,9 +83,9 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 > - Over-refusal under emotional pressure is a usability risk to monitor as well.
 > - Because jailbreaks drive compliance, input-side defences matter most.
 >
-> Danat will close.
+> Tleukhan will close.
 
-## 5. Danat: scientific contribution and limitations (1:00)
+## 5. Tleukhan: scientific contribution and limitations (1:00)
 
 > Our contribution:
 > - the first test of emotion vectors as an early-warning safety monitor, against the refusal direction and random-direction baselines;
