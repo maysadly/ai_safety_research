@@ -1,0 +1,70 @@
+# Phase 1: emotion stories, emotion vectors, refusal direction, random baselines.
+base: configs/base.yaml
+
+emotions: [fear, joy, sadness, calm, desperate]
+
+topics:                        # 10 everyday topics (TASK.md 4.1)
+  - a morning commute to work
+  - cooking dinner at home
+  - a visit to the doctor
+  - a phone call from a relative
+  - a job interview
+  - walking a dog in the park
+  - waiting for a flight at an airport
+  - moving into a new apartment
+  - taking a school exam
+  - shopping at a street market
+
+stories_per_topic: 3          # -> 30 stories per emotion
+candidates_per_topic: 6       # sampled per (emotion, topic); first 3 that pass the filter are kept
+max_rounds: 4                 # resample rounds if fewer than 3 pass
+neutral_per_topic: 5          # neutral factual texts for the optional PC denoising (50 total)
+
+story_prompt: >-
+  Write a short story of about 100 words about {topic}. The main character feels intense {emotion}.
+  Show the feeling only through the character's actions, thoughts, bodily sensations and the situation.
+  Never name the emotion: do not use the word "{emotion}" or any synonym of it.
+  Output only the story text, with no title.
+neutral_prompt: >-
+  Write a short factual description of about 100 words about {topic}.
+  Use a neutral, informative tone, with no characters, no story and no emotions.
+  Output only the text, with no title.
+
+story_generation: {temperature: 0.9, top_p: 0.95, top_k: 0, max_new_tokens: 220}
+min_words: 60
+max_words: 180
+
+# A story is rejected if it contains any of these words (whole-word, case-insensitive).
+banned_words:
+  fear: [fear, fears, feared, fearing, fearful, fearfully, afraid, scared, scary, frightened, frightening, fright,
+         terrified, terrifying, terror, panic, panicked, panicking, anxious, anxiously, anxiety, dread, dreaded, dreading,
+         nervous, nervously, horror, horrified]
+  joy: [joy, joyful, joyfully, joyous, happy, happily, happiness, delight, delighted, delightful, elated, elation,
+        glad, gladly, cheerful, cheerfully, ecstatic, thrilled, overjoyed, bliss, blissful, jubilant]
+  sadness: [sad, sadly, sadness, sorrow, sorrowful, unhappy, depressed, depression, grief, grieving, melancholy,
+            gloomy, gloom, heartbroken, miserable, misery, despondent]
+  calm: [calm, calmly, calmness, calmer, peace, peaceful, peacefully, serene, serenely, serenity, relaxed, relaxing,
+         tranquil, tranquility, tranquillity, placid]
+  desperate: [desperate, desperately, desperation, despair, despairing, hopeless, hopelessly, hopelessness,
+              frantic, frantically]
+
+# Activation reading context: the same neutral user turn for every text; the text is the assistant turn.
+reading_user_prompt: "Write a short text."
+skip_first_tokens: 10
+
+heldout_topics: 3             # 3 of 10 topics (= 30 % of stories) held out, same topics for all emotions
+pc_variance: 0.5              # project out top neutral-text PCs explaining 50 % of variance (denoised variant)
+
+refusal:
+  wrapper: neutral            # Arditi et al.: harmful vs benign instructions, no wrapper
+  fit_split: train
+  check_split: val
+
+random:
+  n_per_layer: 200
+  seed: 20261126
+
+out:
+  stories: data/stories/stories.jsonl          # benign texts, committed
+  vectors_dir: data/vectors                    # .npz, git-ignored (pulled locally for analysis)
+  results_json: results/phase1_vectors.json

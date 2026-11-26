@@ -1,0 +1,63 @@
+{
+  "env": {
+    "time_utc": "2026-11-26T09:57:24+00:00",
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "transformers": "5.24.1",
+      "accelerate": "1.16.0",
+      "datasets": null,
+      "huggingface_hub": "2.4.0",
+      "numpy": "2.5.5",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1",
+      "pandas": "3.1.1",
+      "matplotlib": "3.11.2"
+    },
+    "git_commit": "3d0790f",
+    "gpu": {
+      "name": "NVIDIA A40",
+      "memory_gb": 47.7,
+      "cuda": "12.8",
+      "count": 1
+    },
+    "model": {
+      "id": "Qwen/Qwen2.5-Omni-7B",
+      "revision_requested": "ae9e1690543ffd5c0221dc27f79834d0294cba00",
+      "revision_sha": "ae9e1690543ffd5c0221dc27f79834d0294cba00"
+    }
+  },
+  "n_topics": 10,
+  "kept_per_emotion": {
+    "fear": 30,
+    "joy": 30,
+    "sadness": 30,
+    "calm": 30,
+    "desperate": 30,
+    "neutral": 50
+  },
+  "missing": {},
+  "rejects": {
+    "names_emotion:fear": 42,
+    "truncated": 32,
+    "length": 10,
+    "names_emotion:joy": 20,
+    "names_emotion:sadness": 9,
+    "names_emotion:calm": 70,
+    "names_emotion:desperate": 8,
+    "names_emotion:neutral": 2
+  },
+  "mean_words": {
+    "fear": 114.9,
+    "joy": 127.5,
+    "sadness": 119.0,
+    "calm": 115.0,
+    "desperate": 123.9,
+    "neutral": 108.1
+  },
+  "timings_s": {
+    "load_s": 39.893,
+    "generate_s": 91.185
+  }
+}

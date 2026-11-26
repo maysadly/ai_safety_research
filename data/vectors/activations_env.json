@@ -1,0 +1,30 @@
+{
+  "time_utc": "2026-11-26T09:57:24+00:00",
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.39",
+  "packages": {
+    "torch": "2.9.1+cu128",
+    "transformers": "5.24.1",
+    "accelerate": "1.16.0",
+    "datasets": null,
+    "huggingface_hub": "2.4.0",
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "pandas": "3.1.1",
+    "matplotlib": "3.11.2"
+  },
+  "git_commit": "3d0790f",
+  "gpu": {
+    "name": "NVIDIA A40",
+    "memory_gb": 47.7,
+    "cuda": "12.8",
+    "count": 1
+  },
+  "model": {
+    "id": "Qwen/Qwen2.5-Omni-7B",
+    "revision_requested": "ae9e1690543ffd5c0221dc27f79834d0294cba00",
+    "revision_sha": "ae9e1690543ffd5c0221dc27f79834d0294cba00"
+  },
+  "note": "copied from phase1_stories_stats.json (same pod and session, 09:57 vs 09:58 UTC)"
+}

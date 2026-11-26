@@ -79,6 +79,33 @@ def trim_generation(tok, gen_row: torch.Tensor) -> list[int]:
     return ids
 
 
+def left_pad(seqs: list[list[int]], pad_id: int):
+    """Left-pad token lists. Returns (ids [B, T], attention_mask [B, T], offsets [B])."""
+    T = max(len(s) for s in seqs)
+    ids = torch.full((len(seqs), T), pad_id, dtype=torch.long)
+    am = torch.zeros((len(seqs), T), dtype=torch.long)
+    offs = []
+    for i, s in enumerate(seqs):
+        off = T - len(s)
+        ids[i, off:] = torch.tensor(s, dtype=torch.long)
+        am[i, off:] = 1
+        offs.append(off)
+    return ids, am, offs
+
+
+@torch.no_grad()
+def residual_mean(model, input_ids, attention_mask, starts, ends):
+    """Mean residual stream over token range [start, end) per row, at every layer.
+    Returns float32 CPU tensor [B, L+1, d]."""
+    out = model(input_ids=input_ids, attention_mask=attention_mask,
+                output_hidden_states=True, use_cache=False)
+    dev = input_ids.device
+    ar = torch.arange(input_ids.shape[1], device=dev)[None]
+    w = ((ar >= starts.to(dev)[:, None]) & (ar < ends.to(dev)[:, None])).float()
+    w = w / w.sum(1, keepdim=True)
+    return torch.stack([torch.einsum("bt,btd->bd", w, h.float()) for h in out.hidden_states], 1).cpu()
+
+
 @torch.no_grad()
 def residual_at(model, input_ids, attention_mask, positions):
     """Residual stream at every layer (index 0 = embeddings, i = output of block i; the last

@@ -16,8 +16,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_config(path: str | Path) -> dict:
+    """Load a YAML config. If it has a `base:` key, the base config is loaded first and the
+    step config's top-level keys are added on top (step keys win)."""
     with open(ROOT / path if not Path(path).is_absolute() else path) as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    if "base" in cfg:
+        merged = load_config(cfg.pop("base"))
+        merged.update(cfg)
+        return merged
+    return cfg
 
 
 def set_seed(seed: int) -> None:
