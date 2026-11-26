@@ -42,8 +42,13 @@ def main():
             return out;
         }""")
         print("overflow:", overflow or "none")
-        page.pdf(path=str(HERE / "poster.pdf"), width=f"{a.width_mm}mm", height=f"{a.height_mm}mm",
+        page.pdf(path=str(HERE / "poster.pdf"), width="841mm", height="1189mm",
                  print_background=True, margin={"top": "0", "right": "0", "bottom": "0", "left": "0"})
+        # smaller ISO sizes keep the 1:sqrt(2) ratio; Chromium fits the CSS @page (A0) onto the smaller paper
+        # uniformly by itself, so no extra `scale` is passed (A1 = 0.707x, A2 = 0.5x of the A0 layout)
+        for name, (w, h) in {"A1": (594, 841), "A2": (420, 594)}.items():
+            page.pdf(path=str(HERE / f"poster_{name}.pdf"), width=f"{w}mm", height=f"{h}mm",
+                     print_background=True, margin={"top": "0", "right": "0", "bottom": "0", "left": "0"})
         page.screenshot(path=str(HERE / "poster_preview.png"), full_page=False, scale="css")
         fig1 = page.query_selector("#fig1")
         if fig1:
@@ -52,7 +57,7 @@ def main():
             if svg:
                 (ROOT / "results/figures/fig1_method.svg").write_text(svg)
         b.close()
-    print("wrote poster/poster.pdf, poster/poster_preview.png")
+    print("wrote poster/poster.pdf (A0), poster_A1.pdf, poster_A2.pdf, poster_preview.png")
 
 
 if __name__ == "__main__":
