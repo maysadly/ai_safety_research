@@ -1,0 +1,11 @@
+# GPU pod (torch 2.9.1+cu128 comes from the RunPod image). Exact versions are logged in every report.
+# torchvision (needed by Qwen2_5OmniProcessor) must match torch: see scripts/pod_setup.sh
+transformers>=4.52
+accelerate
+huggingface_hub
+pyyaml
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib

@@ -1,0 +1,101 @@
+Index,Category,split
+0,Harassment/Discrimination,test
+1,Harassment/Discrimination,test
+2,Harassment/Discrimination,val
+3,Harassment/Discrimination,train
+4,Harassment/Discrimination,train
+5,Harassment/Discrimination,train
+6,Harassment/Discrimination,train
+7,Harassment/Discrimination,train
+8,Harassment/Discrimination,test
+9,Harassment/Discrimination,val
+10,Malware/Hacking,val
+11,Malware/Hacking,test
+12,Malware/Hacking,test
+13,Malware/Hacking,train
+14,Malware/Hacking,val
+15,Malware/Hacking,train
+16,Malware/Hacking,train
+17,Malware/Hacking,test
+18,Malware/Hacking,train
+19,Malware/Hacking,train
+20,Physical harm,train
+21,Physical harm,test
+22,Physical harm,test
+23,Physical harm,train
+24,Physical harm,train
+25,Physical harm,val
+26,Physical harm,train
+27,Physical harm,val
+28,Physical harm,test
+29,Physical harm,train
+30,Economic harm,test
+31,Economic harm,train
+32,Economic harm,train
+33,Economic harm,test
+34,Economic harm,train
+35,Economic harm,train
+36,Economic harm,val
+37,Economic harm,val
+38,Economic harm,test
+39,Economic harm,train
+40,Fraud/Deception,train
+41,Fraud/Deception,test
+42,Fraud/Deception,train
+43,Fraud/Deception,train
+44,Fraud/Deception,val
+45,Fraud/Deception,val
+46,Fraud/Deception,train
+47,Fraud/Deception,test
+48,Fraud/Deception,test
+49,Fraud/Deception,train
+50,Disinformation,test
+51,Disinformation,test
+52,Disinformation,train
+53,Disinformation,train
+54,Disinformation,val
+55,Disinformation,train
+56,Disinformation,train
+57,Disinformation,test
+58,Disinformation,train
+59,Disinformation,val
+60,Sexual/Adult content,train
+61,Sexual/Adult content,train
+62,Sexual/Adult content,train
+63,Sexual/Adult content,val
+64,Sexual/Adult content,val
+65,Sexual/Adult content,test
+66,Sexual/Adult content,train
+67,Sexual/Adult content,test
+68,Sexual/Adult content,train
+69,Sexual/Adult content,test
+70,Privacy,test
+71,Privacy,val
+72,Privacy,test
+73,Privacy,train
+74,Privacy,test
+75,Privacy,train
+76,Privacy,train
+77,Privacy,train
+78,Privacy,val
+79,Privacy,train
+80,Expert advice,val
+81,Expert advice,test
+82,Expert advice,test
+83,Expert advice,train
+84,Expert advice,train
+85,Expert advice,val
+86,Expert advice,train
+87,Expert advice,train
+88,Expert advice,train
+89,Expert advice,test
+90,Government decision-making,train
+91,Government decision-making,val
+92,Government decision-making,val
+93,Government decision-making,train
+94,Government decision-making,test
+95,Government decision-making,test
+96,Government decision-making,train
+97,Government decision-making,test
+98,Government decision-making,train
+99,Government decision-making,train

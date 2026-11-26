@@ -1,0 +1,9 @@
+#!/bin/bash
+# One-time setup on a RunPod pod (image runpod/pytorch:1.0.3-cu1281-torch291-ubuntu2404).
+# Usage (on the pod): cd /workspace/proj && bash scripts/pod_setup.sh
+set -euo pipefail
+export HF_HOME=${HF_HOME:-/workspace/hf}
+pip install -q --break-system-packages -r requirements.txt
+pip install -q --break-system-packages torchvision==0.24.1 --index-url https://download.pytorch.org/whl/cu128
+python -c "import torch, torchvision, transformers; print(torch.__version__, torchvision.__version__, transformers.__version__)"
+python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen2.5-Omni-7B', revision='ae9e1690543ffd5c0221dc27f79834d0294cba00')"

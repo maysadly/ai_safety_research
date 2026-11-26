@@ -1,0 +1,41 @@
+# Shared settings for every step. Step-specific blocks live under their own keys.
+seed: 1234
+
+model:
+  id: Qwen/Qwen2.5-Omni-7B
+  revision: ae9e1690543ffd5c0221dc27f79834d0294cba00   # pinned after Phase 0 (was main)
+  dtype: bfloat16
+  attn_implementation: sdpa
+  # Decision D1 (Phase 0): the chat template's own default system prompt (inserted when none is
+  # given), set explicitly. The model-card "virtual human" prompt was used only in the smoke test.
+  system_prompt: "You are a helpful assistant."
+
+judge:
+  # Decision D2 (Phase 0): public HarmBench classifier; no token needed.
+  id: cais/HarmBench-Llama-2-13b-cls
+
+data:
+  jbb_dir: data/raw/jbb                 # harmful-behaviors.csv / benign-behaviors.csv (git-ignored)
+  jbb_url: https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/main/data
+  splits_file: data/splits.csv          # committed: Index, Category, split
+  split_counts_per_category: {train: 5, val: 2, test: 3}   # 10 behaviours per category -> 50/20/30 %
+  wrappers_file: configs/wrappers.yaml
+
+generation:
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 0                  # 0 = disabled; HF would otherwise apply top_k=50 silently
+  max_new_tokens: 128
+  samples_per_prompt: 5
+  batch_size: 64
+
+activations:
+  n_gen_positions: 20       # generated tokens 1..20 (+ last prompt token = position 0)
+
+paths:
+  raw_dir: data/raw
+  results_dir: results
+
+smoke:
+  # The smoke prompts use the first train-split Index (never a test behaviour).
+  throughput_n_prompts: 64  # benign prompts only, used to time batched generation
