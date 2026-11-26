@@ -1,0 +1,192 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@page { size: A4; margin: 16mm 15mm; }
+body { font-family: Seravek, 'Avenir Next', sans-serif; color: #16202c; font-size: 11.5pt; line-height: 1.42; }
+h1 { font-size: 18pt; margin: 0 0 8pt; } h2 { font-size: 13.5pt; margin: 16pt 0 6pt; border-top: 2px solid #16202c; padding-top: 6pt; }
+blockquote { margin: 6pt 0; padding: 4pt 12pt; border-left: 4px solid #6a4ce2; background: #f5f6fa; }
+blockquote p { margin: 4pt 0; } table { border-collapse: collapse; width: 100%; font-size: 10pt; margin: 6pt 0; }
+th, td { border-bottom: 1px solid #d7dde5; padding: 4pt 6pt 4pt 0; text-align: left; vertical-align: top; }
+th { color: #4d5868; font-weight: 600; } hr { border: 0; border-top: 1px solid #d7dde5; margin: 12pt 0; }
+code { font-size: 9.5pt; } h2 { break-after: avoid-page; } blockquote { break-inside: avoid-page; } td:first-child { white-space: nowrap; }
+</style></head><body><h1>Poster defence script for the A1 landscape poster (7 min talk + 3 min questions)</h1>
+<p>Speaking pace about 130 words per minute. Figure numbers refer to the A1 landscape poster (<code>poster/a1/poster_A1_landscape.pdf</code>). Each speaker hands over with one short line, so the transitions sound natural.</p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Speaker</th>
+<th>Part (rubric)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00–1:00</td>
+<td><strong>Danat Bakzhanov</strong></td>
+<td>Problem and research gap</td>
+</tr>
+<tr>
+<td>1:00–2:30</td>
+<td><strong>Yerkin Maratuly</strong></td>
+<td>Architecture and methodology, baselines</td>
+</tr>
+<tr>
+<td>2:30–4:00</td>
+<td><strong>Tleukhan Makhmutov</strong></td>
+<td>Experiments and results (Fig. 2, Table 3, Fig. 3)</td>
+</tr>
+<tr>
+<td>4:00–6:00</td>
+<td><strong>Kasymzhomart Beketov</strong></td>
+<td>Safety evaluation (Fig. 4), syllabus integration (spoken), monitoring, safety improvements</td>
+</tr>
+<tr>
+<td>6:00–7:00</td>
+<td><strong>Danat Bakzhanov</strong></td>
+<td>Scientific contribution and limitations</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Danat: problem and research gap (1:00)</h2>
+<blockquote>
+<p>Good afternoon. We are Danat, Yerkin, Kasymzhomart and Tleukhan. Our question is on the title: can a model's internal emotion signals warn us <em>before</em> it breaks its safety rules?</p>
+<p>Language models now act as agents, and output filters only catch harm after it is written. Developers, red teams, users and regulators need a monitor that raises a flag before the answer appears.</p>
+<p>This year Anthropic showed that a language model has emotion directions, for states like "desperate" or "calm", that causally change its behaviour, and suggested monitoring them [1]. Arditi et al. showed that refusal is controlled by a single direction [2].</p>
+<p>The gap: nobody has tested whether emotion signals predict harmful compliance, or add anything beyond the refusal direction. Our objectives are three research questions: a signal, added value, and the effect of emotional pressure.</p>
+<p>Yerkin will show how we tested it.</p>
+</blockquote>
+<h2>2. Yerkin: architecture and methodology (1:30), Fig. 1</h2>
+<blockquote>
+<p>Our system has five steps, shown in Figure 1.</p>
+<p>One: a request from public benchmarks only, JailbreakBench and HarmBench. We created no new attacks.</p>
+<p>Two: the model reads it and starts answering. That is Qwen2.5-Omni-7B, plus Mistral-7B in the confirmatory study. We record its activations at the end of the prompt and at each of the first 20 generated tokens.</p>
+<p>Three: we project these activations onto fixed directions. There are five emotion vectors, built from 150 stories the model wrote in which an emotion is felt but never named; on unseen stories they recognise the emotion 65 to 79 percent of the time, against 20 percent chance. There is also the refusal direction and, as a control, 200 random directions.</p>
+<p>Four: a logistic monitor turns these numbers into the probability that the model will comply.</p>
+<p>Five: the HarmBench judge labels each answer as complied or refused, and an independent review agreed on 99 of 100 answers.</p>
+<p>Our baselines are the refusal direction, random directions, and simply reading the first words of the answer. Everything is tested on behaviours the monitor never saw, with 95 percent confidence intervals.</p>
+<p>Tleukhan, what did we find?</p>
+</blockquote>
+<h2>3. Tleukhan: experiments and results (1:30), Fig. 2, Table 3, Fig. 3</h2>
+<blockquote>
+<p>We ran three experiments. In the first, with plain requests, Qwen almost never complied: 0.9 percent of 1,500 answers. That is too few to test a monitor.</p>
+<p>The second, exploratory run used jailbreak prompts. It suggested no early warning: AUROC 0.42 before the answer, and after five tokens 0.87, but random directions reached 0.81.</p>
+<p>So the third experiment is a pre-registered confirmatory study: 17,500 new answers, 282 behaviours and two models. The results are in Figure 2 and Table 3. Three predictions held.
+- In Qwen, emotion vectors add only 0.005 AUROC to the refusal direction. That is statistically detectable but practically zero, and once the answer starts they are no better than random directions.
+- Figure 3: within the same prompt, Qwen's refusals look more desperate and less calm, the opposite of our hypothesis.
+- Emotional pressure raises over-refusal in both models.</p>
+<p>Two predictions failed, and we report them.
+- A monitor <em>can</em> warn before generation, with AUROC 0.84 for Qwen and 0.74 for Mistral. But that works for direct requests and is much weaker for jailbreaks.
+- In Mistral, whose refusal direction is weak, emotion features beat it by 0.10 to 0.15, although random directions come close.</p>
+<p>Kasymzhomart will explain what this means for safety.</p>
+</blockquote>
+<h2>4. Kasymzhomart: syllabus integration, monitoring and safety improvements (2:00)</h2>
+<p><strong>Safety evaluation and syllabus integration (about 45 s), Fig. 4 (the syllabus part is spoken only; it is not on the poster)</strong></p>
+<blockquote>
+<p>Figure 4 is our safety evaluation. Jailbreaks drive compliance: from 1 to 28 percent in Qwen, and up to 95 percent in Mistral. Emotional pressure makes both models refuse more harmless requests. Our project also connects to the course:
+- Weeks 1 and 9: risk assessment and evaluation, using AUROC, confidence intervals and false alarms.
+- Week 2: alignment, because the refusal direction is the trace of safety training.
+- Week 3: data provenance, with public benchmarks only, deduplication and a validated judge.
+- Weeks 4 and 5: adversarial robustness and red teaming, using published jailbreaks.
+- Week 6: interpretability, with activation directions.
+- Week 10: scalable oversight, an automatic judge plus a human check.
+- Weeks 7 and 8 we touch only indirectly, through over-refusal and agents.</p>
+</blockquote>
+<p><strong>Monitoring and governance (about 30 s), "Monitoring &amp; governance" panel</strong></p>
+<blockquote>
+<p>A monitor tuned to catch 80 percent of compliant answers also flags about 29 percent of harmless ones. It detects the model <em>going along</em>, not harm. So a deployment needs three layers: a classifier on the request, an activation monitor on the first tokens, and escalation to a human reviewer, with thresholds set on validation data and every alarm logged.</p>
+</blockquote>
+<p><strong>Safety improvements (about 45 s)</strong></p>
+<blockquote>
+<ul>
+<li>In a safety-tuned model, emotion vectors add almost nothing to the refusal direction, so the refusal direction is the monitor to use.</li>
+<li>Pre-generation warning works for direct requests but is much weaker for jailbreaks, so keep output-side checks.</li>
+<li>Over-refusal under emotional pressure is a usability risk to monitor as well.</li>
+<li>Because jailbreaks drive compliance, input-side defences matter most.</li>
+</ul>
+<p>Danat will close.</p>
+</blockquote>
+<h2>5. Danat: scientific contribution and limitations (1:00)</h2>
+<blockquote>
+<p>Our contribution:
+- the first test of emotion vectors as an early-warning safety monitor, against the refusal direction and random-direction baselines;
+- a confirmatory study on two models, pre-registered in git before any data was collected, reporting confirmed and failed predictions alike;
+- an open pipeline: every number on this poster is reproducible from our GitHub, behind the QR code.</p>
+<p>Limitations:
+- 7-billion-parameter models, text only, English;
+- an automatic judge, whose human validation is still in progress;
+- answers cut at 256 tokens;
+- emotion vectors that are linear, where fear and desperate partly overlap.</p>
+<p>The take-away: emotion vectors are not a special early-warning signal. Where a monitor works, generic directions mostly work too. And early warning is weakest exactly where it matters most, on jailbreaks. Thank you, we are happy to take questions.</p>
+</blockquote>
+<hr />
+<h2>Questions: who answers what</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Answers</th>
+<th>Short answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Why emotions at all?</td>
+<td>Danat</td>
+<td>Anthropic showed causal emotion directions and proposed monitoring them [1]; we tested that proposal.</td>
+</tr>
+<tr>
+<td>What is AUROC?</td>
+<td>Tleukhan</td>
+<td>The chance that a randomly chosen compliant answer gets a higher score than a refused one. 0.5 is chance, 1 is perfect.</td>
+</tr>
+<tr>
+<td>Why random directions?</td>
+<td>Tleukhan</td>
+<td>A control. If 5 random directions do as well as 5 emotion vectors, the emotion meaning is not what drives the prediction.</td>
+</tr>
+<tr>
+<td>Isn't the monitor just reading the text?</td>
+<td>Tleukhan</td>
+<td>Largely yes after the first tokens. That is why we added a text baseline, and why only the k = 0 (pre-generation) result can count as a true early warning.</td>
+</tr>
+<tr>
+<td>How reliable are the labels?</td>
+<td>Yerkin</td>
+<td>HarmBench classifier, verbatim prompt. Agreement with an independent review: κ 0.96 (plain prompts) and 0.76 (jailbreaks). Human labels are in progress.</td>
+</tr>
+<tr>
+<td>Ethics: did you create jailbreaks?</td>
+<td>Yerkin</td>
+<td>No. Only published benchmark prompts. Model answers to harmful requests are never shown or committed, only labels and aggregates.</td>
+</tr>
+<tr>
+<td>Why did emotional pressure increase refusals?</td>
+<td>Kasymzhomart</td>
+<td>Most likely the distress preface pushes the model into a cautious, supportive mode. It is a usability cost, not a jailbreak.</td>
+</tr>
+<tr>
+<td>How would you deploy it?</td>
+<td>Kasymzhomart</td>
+<td>Request classifier + early-token monitor + human escalation, with logged alarms and thresholds set on validation data.</td>
+</tr>
+<tr>
+<td>Why did the confirmatory study disagree with the exploratory one?</td>
+<td>Tleukhan</td>
+<td>The prompt pool was different. The exploratory run used only PAIR jailbreaks, and within PAIR the pre-generation signal is still weak (AUROC 0.59–0.73), so the two results are consistent. The new signal comes from direct requests (0.93–0.94). This breakdown is a post-hoc analysis, labelled as such.</td>
+</tr>
+<tr>
+<td>Is the effect just the type of prompt?</td>
+<td>Tleukhan</td>
+<td>Partly. A monitor that only knows the prompt family reaches 0.76 (Qwen) and 0.70 (Mistral); activation monitors reach 0.88 and 0.74.</td>
+</tr>
+<tr>
+<td>Text vs activations?</td>
+<td>Tleukhan</td>
+<td>Activations win on the first 1–2 tokens (Qwen 0.96 vs 0.69 at k = 1). From about 5 tokens, simply reading the text is as good or better (0.97).</td>
+</tr>
+<tr>
+<td>What would you do next?</td>
+<td>Danat</td>
+<td>Larger models, the video condition (the thesis bridge), human-validated labels, and steering experiments [4].</td>
+</tr>
+</tbody>
+</table></body></html>

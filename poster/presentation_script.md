@@ -1,4 +1,4 @@
-# Poster defence script (7 min talk + 3 min questions)
+# Poster defence script for the A1 landscape poster (7 min talk + 3 min questions)
 
 Speaking pace about 130 words per minute. Figure numbers refer to the A1 landscape poster (`poster/a1/poster_A1_landscape.pdf`). Each speaker hands over with one short line, so the transitions sound natural.
 
@@ -16,11 +16,11 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 
 > Good afternoon. We are Danat, Yerkin, Kasymzhomart and Tleukhan. Our question is on the title: can a model's internal emotion signals warn us *before* it breaks its safety rules?
 >
-> Language models now act as agents, and output filters only catch harm after it is written. We want a monitor that raises a flag before the answer appears.
+> Language models now act as agents, and output filters only catch harm after it is written. Developers, red teams, users and regulators need a monitor that raises a flag before the answer appears.
 >
 > This year Anthropic showed that a language model has emotion directions, for states like "desperate" or "calm", that causally change its behaviour, and suggested monitoring them [1]. Arditi et al. showed that refusal is controlled by a single direction [2].
 >
-> The gap: nobody has tested whether emotion signals predict harmful compliance, or whether they add anything beyond the refusal direction. Our objective is exactly that, written as three hypotheses: a signal, added value, and the effect of emotional pressure.
+> The gap: nobody has tested whether emotion signals predict harmful compliance, or add anything beyond the refusal direction. Our objectives are three research questions: a signal, added value, and the effect of emotional pressure.
 >
 > Yerkin will show how we tested it.
 
@@ -89,7 +89,7 @@ Speaking pace about 130 words per minute. Figure numbers refer to the A1 landsca
 
 > Our contribution:
 > - the first test of emotion vectors as an early-warning safety monitor, against the refusal direction and random-direction baselines;
-> - a pre-registered confirmatory study on two models, reporting confirmed and failed predictions alike;
+> - a confirmatory study on two models, pre-registered in git before any data was collected, reporting confirmed and failed predictions alike;
 > - an open pipeline: every number on this poster is reproducible from our GitHub, behind the QR code.
 >
 > Limitations:
