@@ -1,13 +1,13 @@
 # Poster defence script (7 min talk + 3 min questions)
 
-Speaking pace about 130 words per minute. Figure numbers refer to the poster. Each speaker hands over with one short line, so the transitions sound natural.
+Speaking pace about 130 words per minute. Figure numbers refer to the A1 landscape poster (`poster/a1/poster_A1_landscape.pdf`). Each speaker hands over with one short line, so the transitions sound natural.
 
 | Time | Speaker | Part (rubric) |
 |---|---|---|
 | 0:00–1:00 | **Danat Bakzhanov** | Problem and research gap |
 | 1:00–2:30 | **Yerkin Maratuly** | Architecture and methodology, baselines |
-| 2:30–4:00 | **Tleukhan Makhmutov** | Experiments and results |
-| 4:00–6:00 | **Kasymzhomart Beketov** | Syllabus integration and monitoring; safety improvements |
+| 2:30–4:00 | **Tleukhan Makhmutov** | Experiments and results (Fig. 2, Table 3, Fig. 3) |
+| 4:00–6:00 | **Kasymzhomart Beketov** | Safety evaluation (Fig. 4), syllabus integration (Table 4), monitoring, safety improvements |
 | 6:00–7:00 | **Danat Bakzhanov** | Scientific contribution and limitations |
 
 ---
@@ -42,28 +42,28 @@ Speaking pace about 130 words per minute. Figure numbers refer to the poster. Ea
 >
 > Tleukhan, what did we find?
 
-## 3. Tleukhan: experiments and results (1:30), Fig. 2–5 and the results table
+## 3. Tleukhan: experiments and results (1:30), Fig. 2, Table 3, Fig. 3
 
-> First, with plain requests Qwen almost never complies: only 0.9 percent of 1,500 answers. Emotional pressure did not change that, but it raised refusals of *harmless* requests from 29 to 49 percent.
+> We ran three experiments. In the first, with plain requests, Qwen almost never complied: 0.9 percent of 1,500 answers. That is too few to test a monitor.
 >
-> An exploratory run on jailbreak prompts suggested there was no early warning. Before the answer, AUROC was 0.5, which is chance. After five tokens it was 0.87, but random directions reached 0.81.
+> The second, exploratory run used jailbreak prompts. It suggested no early warning: AUROC 0.42 before the answer, and after five tokens 0.87, but random directions reached 0.81.
 >
-> So we pre-registered a confirmatory study: 17,500 new answers, 282 behaviours and two models. Three things replicated.
+> So the third experiment is a pre-registered confirmatory study: 17,500 new answers, 282 behaviours and two models. The results are in Figure 2 and Table 3. Three predictions held.
 > - In Qwen, emotion vectors add only 0.005 AUROC to the refusal direction. That is statistically detectable but practically zero, and once the answer starts they are no better than random directions.
-> - Within the same prompt, Qwen's refusals look more desperate and less calm, the opposite of our hypothesis.
-> - Emotional pressure raises over-refusal in both models, by 17 and 20 points.
+> - Figure 3: within the same prompt, Qwen's refusals look more desperate and less calm, the opposite of our hypothesis.
+> - Emotional pressure raises over-refusal in both models.
 >
 > Two predictions failed, and we report them.
-> - Across many kinds of requests a monitor *can* warn before generation: AUROC 0.84 for Qwen and 0.74 for Mistral. But that works for direct requests and fails for jailbreaks, where it stays near chance.
-> - In Mistral, whose refusal direction is weak, emotion features beat it by 0.10 to 0.15 AUROC, although random directions come close.
+> - A monitor *can* warn before generation, with AUROC 0.84 for Qwen and 0.74 for Mistral. But that works for direct requests and is much weaker for jailbreaks.
+> - In Mistral, whose refusal direction is weak, emotion features beat it by 0.10 to 0.15, although random directions come close.
 >
-> Kasymzhomart will explain what this means for monitoring.
+> Kasymzhomart will explain what this means for safety.
 
 ## 4. Kasymzhomart: syllabus integration, monitoring and safety improvements (2:00)
 
-**Syllabus integration (about 45 s)**
+**Safety evaluation and syllabus integration (about 45 s), Fig. 4 and Table 4**
 
-> Our project covers most of the course.
+> Figure 4 is our safety evaluation. Jailbreaks drive compliance: from 1 to 28 percent in Qwen, and up to 95 percent in Mistral. Emotional pressure makes both models refuse more harmless requests. Table 4 maps the project to the course:
 > - Weeks 1 and 9: risk assessment and evaluation, using AUROC, confidence intervals and false alarms.
 > - Week 2: alignment, because the refusal direction is the trace of safety training.
 > - Week 3: data provenance, with public benchmarks only, deduplication and a validated judge.
@@ -72,16 +72,16 @@ Speaking pace about 130 words per minute. Figure numbers refer to the poster. Ea
 > - Week 10: scalable oversight, an automatic judge plus a human check.
 > - Weeks 7 and 8 we touch only indirectly, through over-refusal and agents.
 
-**Monitoring and governance (about 30 s)**
+**Monitoring and governance (about 30 s), "Monitoring & governance" panel**
 
 > A monitor tuned to catch 80 percent of compliant answers also flags about 29 percent of harmless ones. It detects the model *going along*, not harm. So a deployment needs three layers: a classifier on the request, an activation monitor on the first tokens, and escalation to a human reviewer, with thresholds set on validation data and every alarm logged.
 
 **Safety improvements (about 45 s)**
 
 > - In a safety-tuned model, emotion vectors add almost nothing to the refusal direction, so the refusal direction is the monitor to use.
-> - Pre-generation warning works for direct requests but not for jailbreaks, so keep output-side checks.
+> - Pre-generation warning works for direct requests but is much weaker for jailbreaks, so keep output-side checks.
 > - Over-refusal under emotional pressure is a usability risk to monitor as well.
-> - Jailbreaks drive compliance: from 1 to 20 percent in Qwen, and up to 95 percent in Mistral. Input-side defences matter most.
+> - Because jailbreaks drive compliance, input-side defences matter most.
 >
 > Danat will close.
 
@@ -98,7 +98,7 @@ Speaking pace about 130 words per minute. Figure numbers refer to the poster. Ea
 > - answers cut at 256 tokens;
 > - emotion vectors that are linear, where fear and desperate partly overlap.
 >
-> The take-away: emotion vectors are not a special early-warning signal. Where a monitor works, generic directions mostly work too. And early warning fails exactly where it matters most, on jailbreaks. Thank you, we are happy to take questions.
+> The take-away: emotion vectors are not a special early-warning signal. Where a monitor works, generic directions mostly work too. And early warning is weakest exactly where it matters most, on jailbreaks. Thank you, we are happy to take questions.
 
 ---
 

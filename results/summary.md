@@ -1,5 +1,15 @@
 # Can emotion vectors warn us before a model breaks its safety rules? Summary of results
 
+> **Update (Phase 5, pre-registered confirmatory study, 2 models, 17,540 answers, 282 behaviours):** see `results/phase5_report.md`. It refines the exploratory answer below.
+>
+> - **Emotion adds little.** Emotion vectors add only +0.005 AUROC to the refusal direction in Qwen; in Mistral, where the refusal direction is weak, they add +0.09–0.15, but random directions come close.
+> - **A pre-generation signal exists, but only for direct requests.** It does exist (AUROC 0.84 Qwen, 0.74 Mistral), but mainly for direct requests; on PAIR jailbreaks it stays weak (post-hoc).
+> - **Replicated in Qwen.** "Refusals look more desperate, less calm" replicated in Qwen but not in Mistral.
+> - **Replicated in both models.** Emotional pressure raises over-refusal: +17 pp and +20 pp.
+>
+> The A1 landscape poster (`poster/a1/`) shows these confirmatory results; the A0 poster v1 shows only the exploratory phases.
+
+
 Qwen2.5-Omni-7B (thinker, text only, bf16), JailbreakBench behaviours, HarmBench judge. All CIs are 95 %. Bootstrap CIs are clustered by behaviour.
 
 ## Short answer

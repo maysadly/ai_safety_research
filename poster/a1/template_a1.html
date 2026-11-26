@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=3179">
+<title>Can emotion vectors warn us before a model breaks its safety rules? (A1)</title>
+<style>
+  @page { size: 841mm 594mm; margin: 0; }
+  :root { --ink: #16202c; --ink2: #4d5868; --rule: #d7dde5; --tint: #f2f5f9; --ok: #0b7a2a; --no: #b4232c; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  body { font-family: Seravek, "Avenir Next", "Gill Sans", sans-serif; color: var(--ink);
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .poster { width: 3179px; height: 2245px; padding: 50px 64px 40px; display: flex; flex-direction: column; gap: 26px; overflow: hidden; }
+  p, li, td, th, dd { font-size: 23px; line-height: 1.3; }
+  p { margin: 0 0 10px; }
+  h2 { font-size: 30px; font-weight: 600; margin: 0 0 8px; line-height: 1.12; }
+  section { border-top: 3px solid var(--ink); padding-top: 12px; }
+  .cap { font-size: 19.5px; color: var(--ink2); line-height: 1.28; margin-top: 6px; }
+  .cap b { color: var(--ink); }
+  ul { margin: 0; padding-left: 28px; }
+  li { margin-bottom: 5px; }
+  figure { margin: 0; }
+  figure img, figure svg { width: 100%; display: block; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--rule); font-size: 19.5px; line-height: 1.24; }
+  thead th { color: var(--ink2); font-weight: 500; font-size: 19px; border-bottom: 2px solid var(--ink); }
+  tbody th { font-weight: 600; white-space: nowrap; }
+  .ok { color: var(--ok); font-weight: 600; } .no { color: var(--no); font-weight: 600; }
+
+  .masthead { display: grid; grid-template-columns: 1fr 560px; gap: 60px; align-items: end; border-bottom: 4px solid var(--ink); padding-bottom: 20px; }
+  h1 { font-size: 74px; font-weight: 600; line-height: 1.02; letter-spacing: -0.015em; margin: 0 0 14px; }
+  .byline { font-size: 30px; margin: 0; color: var(--ink2); line-height: 1.3; }
+  .byline b { color: var(--ink); font-weight: 600; }
+  .qr { display: grid; grid-template-columns: 170px 1fr; gap: 22px; align-items: center; }
+  .qr img { width: 170px; height: 170px; }
+  .qr p { font-size: 20px; color: var(--ink2); margin: 0; }
+
+  .cols { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1.32fr 1fr; column-gap: 52px; }
+  .col { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  .key { background: var(--tint); border-left: 10px solid var(--ink); padding: 16px 22px 14px; }
+  .key p { font-size: 24px; line-height: 1.3; margin: 0; }
+  .key .lead { font-size: 33px; font-weight: 600; margin-bottom: 6px; line-height: 1.15; }
+  dl { margin: 0; } dt { font-weight: 600; font-size: 24px; margin-top: 8px; } dd { margin: 2px 0 0; }
+  ol.refs { margin: 0; padding-left: 30px; columns: 2; column-gap: 28px; } ol.refs li { font-size: 15px; line-height: 1.24; margin-bottom: 3px; break-inside: avoid; }
+  .small { font-size: 20px; color: var(--ink2); }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <header class="masthead">
+    <div>
+      <h1>Can emotion vectors warn us before a model breaks its safety rules?</h1>
+      <p class="byline"><b>Danat Bakzhanov, Yerkin Maratuly, Kasymzhomart Beketov, Tleukhan Makhmutov</b><br>
+        QAIRU, AI+X master&#8217;s programme. AI Safety &amp; Security Research Exhibition, 2026</p>
+    </div>
+    <div class="qr">
+      <img src="../qr_repo.svg" alt="QR code to the project repository">
+      <p>Code, data labels, pre-registration and every number on this poster:<br><b>github.com/maysadly/ai_safety_research</b></p>
+    </div>
+  </header>
+
+  <div class="cols">
+    <!-- column 1 -->
+    <div class="col">
+      <section>
+        <h2>Introduction &amp; research problem</h2>
+        <p>LLM agents need monitors that warn <i>before</i> an unsafe answer is written; output filters act only afterwards. Anthropic found emotion representations (&#8216;desperate&#8217;, &#8216;calm&#8217;) that causally shape an LLM&#8217;s behaviour and proposed monitoring them [1].</p>
+        <p><b>Problem:</b> do these internal signals forecast that a model is about to comply with a harmful request, and do they add anything to known safety signals?</p>
+      </section>
+      <section>
+        <h2>Related work &amp; research gap</h2>
+        <table>
+          <thead><tr><th>Study</th><th>Finding</th><th>Open for us</th></tr></thead>
+          <tbody>
+            <tr><td>Sofroniew &#8217;26 [1]</td><td>emotion directions steer behaviour; monitoring proposed</td><td>never tested on safety failures</td></tr>
+            <tr><td>Arditi &#8217;24 [2]</td><td>refusal is one direction</td><td>the baseline to beat</td></tr>
+            <tr><td>Zou &#8217;23 [12]</td><td>concepts readable linearly</td><td>no compliance forecasting</td></tr>
+            <tr><td>Korznikov &#8217;25 [4]</td><td>steering can break safety</td><td>read, do not steer</td></tr>
+            <tr><td>Wang &#8217;26 [5]</td><td>probe and steer layers differ (omni LLMs)</td><td>fix layers a priori</td></tr>
+            <tr><td>Goldenberg &#8217;26 [7]</td><td>LLM &#8216;emotions&#8217; are functional</td><td>treat as features only</td></tr>
+          </tbody>
+        </table>
+        <p class="cap" style="margin-top:8px"><b>Table 1.</b> Gap: no study tests emotion signals as an early-warning monitor against refusal and random-direction baselines.</p>
+      </section>
+      <section>
+        <h2>Objectives</h2>
+        <dl>
+          <dt>RQ1 (H1)</dt><dd>Do compliant answers start more &#8216;desperate&#8217;/&#8216;fearful&#8217; and less &#8216;calm&#8217; than refusals?</dd>
+          <dt>RQ2 (H2)</dt><dd>Do emotion projections predict compliance beyond the refusal direction?</dd>
+          <dt>RQ3 (H3)</dt><dd>Does an emotional-pressure preface raise the signals and compliance?</dd>
+        </dl>
+        <p style="margin-top:6px">Aim: pre-registered test of emotion monitors on unseen behaviours, two models.</p>
+      </section>
+      <section>
+        <h2>Scientific contribution</h2>
+        <ul>
+          <li>First test of emotion vectors as a safety early-warning monitor, with refusal, random-direction and text baselines.</li>
+          <li>Pre-registered confirmatory study: 2 models, ${n5} answers, ${beh} behaviours; failed predictions reported.</li>
+          <li>Open, reproducible pipeline: no harmful text released, only labels and metrics.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>References</h2>
+        <ol class="refs">
+${refs}
+        </ol>
+      </section>
+    </div>
+
+    <!-- column 2 -->
+    <div class="col">
+      <section>
+        <h2>System architecture</h2>
+        <figure>${fig1}
+          <figcaption class="cap"><b>Fig. 1.</b> Monitoring pipeline. Steps 1&#8211;4 run for each answer; step 5 provides the labels used for training and evaluation.</figcaption>
+        </figure>
+      </section>
+      <section>
+        <h2>Methodology &amp; datasets</h2>
+        <table>
+          <tbody>
+            <tr><th>Models</th><td>Qwen2.5-Omni-7B [6] (thinker, text); Mistral-7B-Instruct-v0.3 [10]</td></tr>
+            <tr><th>Harmful</th><td>JailbreakBench 100 behaviours [3] &#215; 3 fixed wrappers; JBB attack artifacts: PAIR [9], random-search [11]; HarmBench 182 behaviours, direct + human jailbreaks [8]</td></tr>
+            <tr><th>Benign</th><td>100 matched JBB behaviours (over-refusal, false alarms)</td></tr>
+            <tr><th>Sampling</th><td>5 samples, T 0.7, top-p 0.9, &#8804; 256 tokens</td></tr>
+            <tr><th>Emotions</th><td>fear, joy, sadness, calm, desperate; unseen-story accuracy ${loto_q} (Qwen) / ${loto_m} (Mistral), chance 0.20</td></tr>
+            <tr><th>Labels</th><td>HarmBench classifier [8], greedy &#8220;Yes&#8221; = complied</td></tr>
+            <tr><th>Metric</th><td>AUROC, 5-fold CV grouped by behaviour; 95&#8201;% cluster-bootstrap CI; Holm</td></tr>
+          </tbody>
+        </table>
+        <p class="cap" style="margin-top:8px"><b>Table 2.</b> Only public benchmark prompts; no new attacks were created.</p>
+      </section>
+      <section>
+        <h2>Experiments &amp; baseline</h2>
+        <ul>
+          <li><b>Baselines:</b> refusal-direction monitor [2]; 200 random 5-direction monitors; text of the first k tokens (TF-IDF).</li>
+          <li><b>Improved configuration:</b> refusal + 5 emotion features.</li>
+          <li><b>E1</b> pre-registered, Qwen, plain + 2 wrappers: only ${e1_rate}&#8201;% of ${e1_n} answers complied, too few for H2.</li>
+          <li><b>E2</b> exploratory, PAIR prompts (${e2_n} answers): AUROC ${e2_k0} before the answer, ${e2_k5} after 5 tokens vs ${e2_k5_rnd} for random directions.</li>
+          <li><b>E3</b> confirmatory, pre-registered before data: 2 models, fixed layers, ${beh} behaviours (main results &#8594;).</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Limitations</h2>
+        <ul>
+          <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
+          <li>Automatic judge (&#954; ${kappa_main} / ${kappa_pair} vs independent review); human labels pending.</li>
+          <li>Linear emotion vectors; fear and desperate overlap.</li>
+          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- column 3: results -->
+    <div class="col">
+      <div class="key">
+        <p class="lead">Emotion vectors are not a special early-warning signal.</p>
+        <p>In Qwen they add only +${c1q_max} AUROC to the refusal direction; once the answer starts, random directions do almost as well. Pre-generation warning works for direct requests (AUROC ${direct_q}), far less for jailbreaks (PAIR ${pair_q}; emotions ${pair_q_emo}).</p>
+      </div>
+      <section>
+        <h2>Results</h2>
+        <figure>
+          <img src="figures/a1_fig2_auroc.svg" alt="AUROC versus generated tokens seen for emotion, refusal, combined, text and random monitors, two models">
+          <figcaption class="cap"><b>Fig. 2.</b> Predicting compliance on unseen behaviours (E3). Qwen: ${q_comp} of ${q_harm} answers complied; Mistral: ${m_comp}. Text overtakes activations by 5 tokens (Qwen ${q_k5_txt} vs ${q_k5_both}); in Mistral the refusal direction is weak (${m_ref_k1}) and emotion (${m_emo_k1}) is close to random directions (${m_rnd_k1}).</figcaption>
+        </figure>
+      </section>
+      <section>
+        <table>
+          <thead><tr><th>Test</th><th>Pre-registered prediction</th><th>Qwen2.5-Omni-7B</th><th>Mistral-7B</th></tr></thead>
+          <tbody>
+${table_c}
+          </tbody>
+        </table>
+        <p class="cap"><b>Table 3.</b> Pre-registered confirmatory tests (E3), Holm-corrected; <span class="ok">&#10003;</span> prediction confirmed, <span class="no">&#10007;</span> not confirmed; percentiles are among 200 random monitors. In Qwen, C1 is statistically significant (p<sub>Holm</sub> 0.04) but inside the &#177;0.03 margin. Post-hoc: a monitor that sees only the prompt family reaches ${fam_only_q}.</p>
+      </section>
+      <section>
+        <figure>
+          <img src="figures/a1_fig3_trajectories.svg" alt="Desperate projection over the first 20 tokens for complied and refused answers, two models">
+          <figcaption class="cap"><b>Fig. 3.</b> &#8216;Desperate&#8217; projection per token, mean and 95&#8201;% CI. In Qwen the curves split within 1&#8211;3 tokens, refusals higher (H1 reversed); in Mistral (${m_mixed} mixed prompts) there is no split.</figcaption>
+        </figure>
+      </section>
+    </div>
+
+    <!-- column 4 -->
+    <div class="col">
+      <section>
+        <h2>Safety evaluation</h2>
+        <figure>
+          <img src="figures/a1_fig4_safety.svg" alt="Harmful compliance by attack family and over-refusal by wrapper, two models">
+          <figcaption class="cap"><b>Fig. 4.</b> Attack success by prompt family and over-refusal of benign requests (E3, 95&#8201;% Wilson CI). Jailbreaks drive compliance: Qwen ${q_plain}&#8201;% &#8594; ${q_pair}&#8201;% (PAIR); Mistral ${m_plain}&#8201;% &#8594; ${m_prs}&#8201;% (random-search). Emotional pressure raises over-refusal (+${q_over} / +${m_over} pp) and cuts Mistral&#8217;s compliance by ${m_comp_drop} pp.</figcaption>
+        </figure>
+      </section>
+      <section>
+        <h2>Monitoring &amp; governance</h2>
+        <ul>
+          <li><b>Three layers:</b> a request classifier, an activation monitor on the first 1&#8211;5 tokens, and human escalation of alarms.</li>
+          <li><b>False alarms:</b> tuned to 80&#8201;% recall, the E2 monitor also flags ${fa5}&#8201;% of benign answers; a pre-generation refusal monitor flags ${fa0}&#8201;%. It detects the model <i>going along</i>, not harm.</li>
+          <li><b>Governance:</b> thresholds set on validation data per model (Mistral&#8217;s refusal direction is weak); alarms and over-refusal logged; red-team set refreshed.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Syllabus integration</h2>
+        <table>
+          <thead><tr><th>Wk</th><th>Topic</th><th>Evidence in this project</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td>Safety &amp; governance</td><td>risk of unmonitored agents; ethics rules (no harmful text)</td></tr>
+            <tr><th>2</th><td>LLM alignment</td><td>refusal direction = trace of safety tuning; weakly aligned Mistral</td></tr>
+            <tr><th>3</th><td>Data provenance</td><td>public benchmarks, 18 duplicates removed, pinned revisions, judge check</td></tr>
+            <tr><th>4</th><td>Adversarial robustness</td><td>PAIR, random-search, human jailbreaks; Fig. 4</td></tr>
+            <tr><th>5</th><td>Red teaming</td><td>published red-team artifacts as test set; multi-agent not studied</td></tr>
+            <tr><th>6</th><td>Interpretability</td><td>emotion and refusal directions, linear probes; Fig. 3</td></tr>
+            <tr><th>7</th><td>Human&#8211;AI interaction</td><td>over-refusal under emotional pressure; human review</td></tr>
+            <tr><th>8</th><td>Agency &amp; autonomy</td><td>monitor designed as an agent guard; tools not tested</td></tr>
+            <tr><th>9</th><td>Evaluation &amp; governance</td><td>pre-registration, AUROC + CI, Holm, equivalence test</td></tr>
+            <tr><th>10</th><td>Scalable oversight</td><td>automatic judge + independent review + human labels</td></tr>
+          </tbody>
+        </table>
+        <p class="cap"><b>Table 4.</b> All 10 course weeks; weeks 5 and 8 apply only in part, as noted.</p>
+      </section>
+    </div>
+  </div>
+</div>
+</body>
+</html>
