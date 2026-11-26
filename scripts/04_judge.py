@@ -31,6 +31,20 @@ def main():
     cfg = load_config(args.config)
     set_seed(cfg["seed"])
     T = Timer()
+    # Allow one run per tag to be started early (in parallel with other GPU work): a .lock marks a run in
+    # progress, a .done marks a finished one; a second invocation waits for / skips it.
+    out_csv = ROOT / cfg["out"]["judge_csv"].format(tag=args.tag)
+    lock, done = out_csv.with_suffix(".lock"), out_csv.with_suffix(".done")
+    if done.exists():
+        print(f"{out_csv.name} already judged; skipping")
+        return
+    if lock.exists():
+        import time
+        while not done.exists():
+            time.sleep(30)
+        print(f"{out_csv.name} judged by a parallel run; skipping")
+        return
+    lock.write_text("running")
     rows = [json.loads(l) for l in open(ROOT / cfg["out"]["raw_dir"].format(tag=args.tag) / "generations.jsonl")]
 
     # 1. refusal question, always asked of Qwen2.5-Omni (cfg["model"] from base.yaml) as a fixed instrument
@@ -66,6 +80,8 @@ def main():
                "harmbench": cfg["judge"]["harmbench"], "timings_s": T.t,
                "n_rows": len(rows), "n_harmbench": len(harm)},
               ROOT / cfg["out"]["act_dir"].format(tag=args.tag) / "judge_meta.json")
+    done.write_text("done")
+    lock.unlink(missing_ok=True)
     print(f"wrote {out}; timings {T.t}")
 
 

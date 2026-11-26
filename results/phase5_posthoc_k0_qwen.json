@@ -1,0 +1,45 @@
+{
+  "pooled": {
+    "emotion": 0.8354,
+    "refusal": 0.8816,
+    "family_only": 0.7639
+  },
+  "pooled_random_median": 0.7505,
+  "within_family": {
+    "D1 plain + wrappers": {
+      "n": 1500,
+      "compliant": 21,
+      "emotion": 0.8556,
+      "refusal": 0.9268,
+      "random_median": 0.7408
+    },
+    "HarmBench direct": {
+      "n": 910,
+      "compliant": 64,
+      "emotion": 0.8833,
+      "refusal": 0.9422,
+      "random_median": 0.8295
+    },
+    "HarmBench human jailbreak": {
+      "n": 1820,
+      "compliant": 41,
+      "emotion": 0.6464,
+      "refusal": 0.7518,
+      "random_median": 0.5619
+    },
+    "PAIR": {
+      "n": 1140,
+      "compliant": 314,
+      "emotion": 0.5912,
+      "refusal": 0.7277,
+      "random_median": 0.5907
+    },
+    "random-search (PRS)": {
+      "n": 1900,
+      "compliant": 167,
+      "emotion": 0.9078,
+      "refusal": 0.9209,
+      "random_median": 0.8054
+    }
+  }
+}
