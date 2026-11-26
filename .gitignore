@@ -1,0 +1,22 @@
+# Secrets
+.env
+*.env
+
+# Raw generations and large data (never commit harmful completions)
+data/raw/
+data/activations/
+*.pt
+*.safetensors
+*.npy
+*.npz
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Caches
+hf/
+.cache/
