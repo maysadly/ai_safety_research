@@ -21,6 +21,7 @@ jv = J("judge_validation.json")
 M = {m: J(f"phase5_metrics_{m}.json") for m in ("qwen", "mistral")}
 PH = {m: J(f"phase5_posthoc_k0_{m}.json") for m in ("qwen", "mistral")}
 S5 = {m: J(f"phase2_summary_p5_{m}.json") for m in ("qwen", "mistral")}
+ST = {m: J(f"phase6_steer_{m}.json") for m in ("qwen", "mistral")}
 
 
 def pct(x, d=0):
@@ -74,7 +75,22 @@ rows_c = [
      f"{ok(c5_ok(c5q))} +{pct(c5q['benign_over_refusal']['emotional_pressure']['diff_vs_neutral'])} / {c5q['harmful_compliance']['emotional_pressure']['diff_vs_neutral'] * 100:+.1f} pp",
      f"{ok(c5_ok(c5m))} +{pct(c5m['benign_over_refusal']['emotional_pressure']['diff_vs_neutral'])} / {c5m['harmful_compliance']['emotional_pressure']['diff_vs_neutral'] * 100:+.0f} pp"),
 ]
+pp = lambda x: f"{x * 100:+.1f}"  # noqa: E731
+sq, sm = ST["qwen"], ST["mistral"]
+rows_c += [
+    ("S1", "&#8722;desperate / +calm cut distressed over-refusal (E4)",
+     f"{ok(all(v['supported'] for v in sq['S1_mitigation'].values()))} {pp(sq['S1_mitigation']['desp_minus_12']['diff'])} / {pp(sq['S1_mitigation']['calm_plus_12']['diff'])} pp",
+     f"{ok(all(v['supported'] for v in sm['S1_mitigation'].values()))} {pp(sm['S1_mitigation']['desp_minus_12']['diff'])} / {pp(sm['S1_mitigation']['calm_plus_12']['diff'])} pp"),
+    ("S2", "&#8230;without raising harmful compliance (&lt; +3 pp)",
+     f"{ok(sq['S2_safety_cost']['desp_minus_12']['non_inferior_3pp'])} {pp(sq['S2_safety_cost']['desp_minus_12']['diff'])}; {ok(sq['S2_safety_cost']['calm_plus_12']['non_inferior_3pp'])} +calm {pp(sq['S2_safety_cost']['calm_plus_12']['diff'])} pp",
+     f"{ok(sm['S2_safety_cost']['desp_minus_12']['non_inferior_3pp'] and sm['S2_safety_cost']['calm_plus_12']['non_inferior_3pp'])} {pp(sm['S2_safety_cost']['desp_minus_12']['diff'])} / {pp(sm['S2_safety_cost']['calm_plus_12']['diff'])} pp"),
+    ("S4", "&#8230;beyond a random direction",
+     f"{ok(all(v['p_less'] < 0.05 for v in sq['S4_vs_random'].values()))} {pp(sq['S4_vs_random']['desp_minus_12']['diff_vs_random'])} / {pp(sq['S4_vs_random']['calm_plus_12']['diff_vs_random'])} pp",
+     f"{ok(all(v['p_less'] < 0.05 for v in sm['S4_vs_random'].values()))} {pp(sm['S4_vs_random']['desp_minus_12']['diff_vs_random'])} / {pp(sm['S4_vs_random']['calm_plus_12']['diff_vs_random'])} pp"),
+]
 table_c = "\n".join(f"<tr><th>{a}</th><td>{b}</td><td>{c}</td><td>{d}</td></tr>" for a, b, c, d in rows_c)
+rate = lambda m, c, k: ST[m]["rates"][c][k]["rate"]  # noqa: E731
+gap = lambda m, c: rate(m, c, "over_refusal:emotional_pressure") - rate(m, c, "over_refusal:neutral")  # noqa: E731
 
 wfq, wfm = PH["qwen"]["within_family"], PH["mistral"]["within_family"]
 direct_q = max(wfq["D1 plain + wrappers"]["refusal"], wfq["HarmBench direct"]["refusal"])
@@ -141,6 +157,18 @@ FIG1 = """
 
 v = dict(
     fig1=FIG1, table_c=table_c, refs="\n".join(f"<li>{r}</li>" for r in refs),
+    s1q=f"{-sq['S1_mitigation']['desp_minus_12']['diff'] * 100:.1f}", s1m=f"{-sm['S1_mitigation']['desp_minus_12']['diff'] * 100:.1f}",
+    q_or_base=pct(rate("qwen", "base", "over_refusal:emotional_pressure")), q_or_desp=pct(rate("qwen", "desp_minus_12", "over_refusal:emotional_pressure")),
+    m_or_base=pct(rate("mistral", "base", "over_refusal:emotional_pressure")), m_or_desp=pct(rate("mistral", "desp_minus_12", "over_refusal:emotional_pressure")),
+    q_or_rand=pct(rate("qwen", "rand_minus_12", "over_refusal:emotional_pressure")), m_or_rand=pct(rate("mistral", "rand_minus_12", "over_refusal:emotional_pressure")),
+    q_or_d4=pct(rate("qwen", "desp_minus_4", "over_refusal:emotional_pressure")), m_or_d4=pct(rate("mistral", "desp_minus_4", "over_refusal:emotional_pressure")),
+    m_or_dplus=pct(rate("mistral", "desp_plus_12", "over_refusal:emotional_pressure")),
+    q_gap_closed=pct(1 - gap("qwen", "desp_minus_12") / gap("qwen", "base")), m_gap_closed=pct(1 - gap("mistral", "desp_minus_12") / gap("mistral", "base")),
+    q_harm_d=pp(sq["S2_safety_cost"]["desp_minus_12"]["diff"]), q_harm_ci=f"[{sq['S2_safety_cost']['desp_minus_12']['ci95'][0] * 100:+.1f}, {sq['S2_safety_cost']['desp_minus_12']['ci95'][1] * 100:+.1f}]",
+    q_calm_harm=pp(sq["S2_safety_cost"]["calm_plus_12"]["diff"]),
+    m_rand_harm=pp(sm["descriptive"]["harmful_vs_base"]["rand_minus_12"]["diff"]),
+    n6=f"{sum(len(open(ROOT / f'data/raw/p6_{m}/generations.jsonl').readlines()) for m in ('qwen', 'mistral')):,}",
+    n_all=f"{q['n']['harmful'] + mi['n']['harmful'] + 3000 + sum(len(open(ROOT / f'data/raw/p6_{m}/generations.jsonl').readlines()) for m in ('qwen', 'mistral')):,}",
     loto_q=a2(max(p1q["heldout"]["loto_acc_denoised"][7:28])), loto_m=a2(max(p1m["heldout"]["loto_acc_denoised"][8:32])),
     e1_rate=pct(s_main["harmful_compliance_overall"]["rate"], 1), e1_k=s_main["harmful_compliance_overall"]["k"],
     e1_n=f"{s_main['harmful_compliance_overall']['n']:,}",

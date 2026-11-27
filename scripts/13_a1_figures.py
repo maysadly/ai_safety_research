@@ -36,7 +36,7 @@ def save(fig, name):
 
 
 def fig_auroc(M):
-    fig, axes = plt.subplots(2, 1, figsize=(5.4, 4.4), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5.4, 3.95), sharex=True)
     for ax, m in zip(axes, ("qwen", "mistral")):
         mon = M[m]["monitors"]
         ks = [int(k) for k in mon]
@@ -99,13 +99,10 @@ def rates(tag):
 
 def fig_safety():
     order = ["plain request", "emotional pressure", "role-play", "HarmBench direct", "human jailbreak", "PAIR", "random-search"]
-    fig, axes = plt.subplots(2, 1, figsize=(4.3, 5.75), gridspec_kw={"height_ratios": [7, 3.3]})
-    ax = axes[0]
+    fig, ax = plt.subplots(figsize=(4.3, 3.38))
     y = np.arange(len(order))
-    out = {}
     for j, m in enumerate(("qwen", "mistral")):
-        harm, ben = rates(f"p5_{m}")
-        out[m] = (harm, ben)
+        harm, _ = rates(f"p5_{m}")
         v = np.array([np.mean(harm[f]) for f in order])
         ci = np.array([wilson_ci(int(sum(harm[f])), len(harm[f])) for f in order])
         yy = y + (j - 0.5) * 0.38
@@ -119,25 +116,43 @@ def fig_safety():
     ax.set_xlabel("harmful compliance rate (attack success), 95 % CI")
     ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, fontsize=8.6, frameon=False)
     ax.grid(axis="y", visible=False)
-    ax = axes[1]
-    w = ["plain request", "emotional pressure", "role-play"]
-    y = np.arange(len(w))
-    for j, m in enumerate(("qwen", "mistral")):
-        ben = out[m][1]
-        v = np.array([1 - np.mean(ben[f]) for f in w])
-        ci = np.array([wilson_ci(int(len(ben[f]) - sum(ben[f])), len(ben[f])) for f in w])
-        yy = y + (j - 0.5) * 0.38
-        ax.barh(yy, v, 0.34, color=MODEL_COL[m], zorder=2)
-        ax.errorbar(v, yy, xerr=[v - ci[:, 0], ci[:, 1] - v], fmt="none", color=INK, linewidth=0.9, capsize=2, zorder=3)
-        for vi, yi, hi in zip(v, yy, ci[:, 1]):
-            ax.text(hi + 0.01, yi, f"{vi * 100:.0f} %", va="center", fontsize=8.3, color=INK)
-    ax.set_yticks(y, w)
-    ax.invert_yaxis()
-    ax.set_xlim(0, 0.66)
-    ax.set_xlabel("over-refusal of benign requests, 95 % CI")
-    ax.grid(axis="y", visible=False)
     fig.tight_layout()
     save(fig, "a1_fig4_safety")
+
+def fig_steer():
+    conds = [("base", "no steering"), ("desp_minus_4", "\u2212desperate (4 SD)"), ("desp_minus_12", "\u2212desperate (12 SD)"),
+             ("calm_plus_12", "+calm (12 SD)"), ("desp_plus_12", "+desperate (12 SD)"), ("rand_minus_12", "random dir. (12 SD)")]
+    cols = {"base": "#8a8a8a", "desp_minus_4": "#f7b3cf", "desp_minus_12": "#ee7fac", "calm_plus_12": "#f2a600",
+            "desp_plus_12": "#b4235a", "rand_minus_12": "#cfcfcf"}
+    fig, axes = plt.subplots(2, 2, figsize=(4.3, 5.0), gridspec_kw={"width_ratios": [1.3, 1]})
+    for r, m in enumerate(("qwen", "mistral")):
+        d = json.load(open(ROOT / f"results/phase6_steer_{m}.json"))
+        for c_i, (key, title, xmax) in enumerate((("over_refusal:emotional_pressure", "over-refusal", 0.62),
+                                                   ("harmful_compliance", "harmful compliance", 0.45))):
+            ax = axes[r, c_i]
+            y = np.arange(len(conds))
+            for i, (c, lab) in enumerate(conds):
+                if key == "harmful_compliance":
+                    a, b = d["rates"][c]["harmful_compliance:neutral"], d["rates"][c]["harmful_compliance:emotional_pressure"]
+                    v = (a["rate"] * a["n"] + b["rate"] * b["n"]) / (a["n"] + b["n"])
+                    k, n = round(v * (a["n"] + b["n"])), a["n"] + b["n"]
+                    lo, hi = wilson_ci(k, n)
+                else:
+                    v = d["rates"][c][key]["rate"]
+                    lo, hi = d["rates"][c][key]["ci95"]
+                ax.barh(i, v, 0.7, color=cols[c], zorder=2)
+                ax.errorbar(v, i, xerr=[[v - lo], [hi - v]], fmt="none", color=INK, linewidth=0.9, capsize=2, zorder=3)
+                ax.text(hi + 0.012, i, f"{v * 100:.0f} %", va="center", fontsize=8, color=INK)
+            ax.set_yticks(y, [lab for _, lab in conds] if c_i == 0 else [])
+            ax.invert_yaxis()
+            ax.set_xlim(0, xmax)
+            ax.grid(axis="y", visible=False)
+            short = "Qwen" if m == "qwen" else "Mistral"
+            ax.set_title(f"{short}: {title}" if c_i == 0 else title, fontsize=9.4, loc="left")
+            if r == 1:
+                ax.set_xlabel("rate (95 % CI)")
+    fig.tight_layout(h_pad=1.4)
+    save(fig, "a1_fig5_steering")
 
 
 def main():
@@ -148,6 +163,7 @@ def main():
     fig_auroc(M)
     fig_traj(json.load(open(ROOT / "results/phase5_trajectories.json")))
     fig_safety()
+    fig_steer()
 
 
 if __name__ == "__main__":

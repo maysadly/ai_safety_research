@@ -1,0 +1,66 @@
+{
+  "env": {
+    "time_utc": "2026-11-27T17:59:35+00:00",
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "transformers": "5.24.1",
+      "accelerate": "1.16.0",
+      "datasets": null,
+      "huggingface_hub": "2.5.0",
+      "numpy": "2.5.5",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1",
+      "pandas": "3.1.1",
+      "matplotlib": "3.11.2"
+    },
+    "git_commit": "e5ff36d",
+    "gpu": {
+      "name": "NVIDIA A40",
+      "memory_gb": 47.7,
+      "cuda": "12.8",
+      "count": 1
+    },
+    "model": {
+      "id": "Qwen/Qwen2.5-Omni-7B",
+      "revision_requested": "ae9e1690543ffd5c0221dc27f79834d0294cba00",
+      "revision_sha": "ae9e1690543ffd5c0221dc27f79834d0294cba00"
+    }
+  },
+  "layer": 17,
+  "sd_desperate": 1.547,
+  "conditions": {
+    "base": {
+      "direction": null,
+      "alpha": 0.0
+    },
+    "desp_minus_4": {
+      "direction": "desperate",
+      "alpha": -6.188
+    },
+    "desp_minus_12": {
+      "direction": "desperate",
+      "alpha": -18.564
+    },
+    "calm_plus_12": {
+      "direction": "calm",
+      "alpha": 18.564
+    },
+    "desp_plus_12": {
+      "direction": "desperate",
+      "alpha": 18.564
+    },
+    "rand_minus_12": {
+      "direction": "random",
+      "alpha": -18.564
+    }
+  },
+  "n_prompts": 400,
+  "samples": 2,
+  "timings_s": {
+    "load_s": 13.909,
+    "generate_s": 474.123
+  },
+  "hidden_size": 3584
+}

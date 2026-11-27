@@ -10,7 +10,14 @@ We test whether internal emotion representations ("emotion vectors") in **Qwen2.
 - **Within a prompt,** Qwen's refusals look *more* desperate and *less* calm.
 - **Emotional pressure** raises refusals of harmless requests in both models.
 
-Full results: [`results/summary.md`](results/summary.md), [`results/phase5_report.md`](results/phase5_report.md).
+**But emotion vectors are a strong causal lever (pre-registered steering test, 9,600 answers):**
+- **Over-refusal falls.** Steering away from "desperate" during generation cuts over-refusal of distressed users from 53 % to 32 % (Qwen) and from 34 % to 9 % (Mistral).
+- **No rise in harmful compliance.**
+- **Specific.** The effect is well beyond that of a random direction.
+
+In short, a poor alarm but a strong lever.
+
+Full results: [`results/summary.md`](results/summary.md), [`results/phase5_report.md`](results/phase5_report.md), [`results/phase6_report.md`](results/phase6_report.md).
 Posters: **A1 landscape (final)** [`poster/a1/poster_A1_landscape.pdf`](poster/a1/poster_A1_landscape.pdf); v1 A0 portrait (exploratory phases) [`poster/poster.pdf`](poster/poster.pdf).
 Presentation scripts: [`poster/presentation_script.md`](poster/presentation_script.md) (A1), [`poster/presentation_script_v1.md`](poster/presentation_script_v1.md) (v1).
 
@@ -30,9 +37,10 @@ Presentation scripts: [`poster/presentation_script.md`](poster/presentation_scri
 | 2c | local | `python scripts/05_labels.py --tag {main,pair}`; `python scripts/05b_judge_validation.py` |
 | 3 | local | `python scripts/06_analysis.py --config configs/phase3.yaml` and `--config configs/phase3_pair.yaml`; `python scripts/07_figures.py [--poster]` |
 | 4 | local | `python poster/build_poster.py && python poster/export.py` |
-
 | 5 | GPU | `bash scripts/pod_phase5.sh smoke` then `full`; locally `python scripts/10_confirmatory.py --model {qwen,mistral}`, `scripts/13_a1_figures.py`, `poster/a1/build_a1.py`, `poster/a1/export_a1.py` |
+| 6A | local | `python scripts/14_overrefusal.py` |
+| 6B | GPU | `bash scripts/pod_phase6.sh` (steered generation + judges); locally `python scripts/16_steer_analysis.py --model {qwen,mistral}` |
 
-GPU work took about 3.7 GPU-hours on RunPod (A40 and A100) and cost about $6.4 in total.
+GPU work cost about $7.2 in total on RunPod (A40 and A100), of which Phase 6 was $0.78.
 
 > Ethics: harmful prompts come only from JailbreakBench, including its published PAIR artifacts; no new jailbreaks were created. Model completions to harmful prompts are never committed or published; only IDs, labels and aggregate metrics are. Raw generations stay in the git-ignored `data/raw/`.

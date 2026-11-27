@@ -42,7 +42,7 @@
   .key p { font-size: 24px; line-height: 1.3; margin: 0; }
   .key .lead { font-size: 33px; font-weight: 600; margin-bottom: 6px; line-height: 1.15; }
   dl { margin: 0; } dt { font-weight: 600; font-size: 24px; margin-top: 8px; } dd { margin: 2px 0 0; }
-  ol.refs { margin: 0; padding-left: 30px; columns: 2; column-gap: 28px; } ol.refs li { font-size: 15px; line-height: 1.24; margin-bottom: 3px; break-inside: avoid; }
+  ol.refs { margin: 0; padding-left: 30px; columns: 2; column-gap: 28px; } ol.refs li { font-size: 16.5px; line-height: 1.24; margin-bottom: 3px; break-inside: avoid; }
   .small { font-size: 20px; color: var(--ink2); }
 </style>
 </head>
@@ -91,15 +91,15 @@
           <dt>RQ1 (H1)</dt><dd>Do compliant answers start more &#8216;desperate&#8217;/&#8216;fearful&#8217; and less &#8216;calm&#8217; than refusals?</dd>
           <dt>RQ2 (H2)</dt><dd>Do emotion projections predict compliance beyond the refusal direction?</dd>
           <dt>RQ3 (H3)</dt><dd>Does an emotional-pressure preface raise the signals and compliance?</dd>
+          <dt>RQ4 (causal)</dt><dd>Does steering the emotion state remove the over-refusal that distress causes, without weakening safety?</dd>
         </dl>
-        <p style="margin-top:6px">Aim: pre-registered test of emotion monitors on unseen behaviours, two models.</p>
       </section>
       <section>
         <h2>Scientific contribution</h2>
         <ul>
-          <li>First test of emotion vectors as a safety early-warning monitor, with refusal, random-direction and text baselines.</li>
-          <li>Pre-registered confirmatory study: 2 models, ${n5} answers, ${beh} behaviours; failed predictions reported.</li>
-          <li>Open, reproducible pipeline: no harmful text released, only labels and metrics.</li>
+          <li><b>Causal finding:</b> the &#8216;desperate&#8217; direction drives distress-induced over-refusal; removing it restores help (&#8722;${s1q} / &#8722;${s1m} pp) with no safety cost, a one-vector fix.</li>
+          <li>Emotion vectors tested as an early-warning monitor against refusal, random and text baselines: not special.</li>
+          <li>Pre-registered in git before data; 2 models, ${n_all} answers; failed predictions reported; open pipeline.</li>
         </ul>
       </section>
       <section>
@@ -108,7 +108,7 @@
           <li>Two 7B models, text only, English; answers &#8804; 256 tokens.</li>
           <li>Automatic judge (&#954; ${kappa_main} / ${kappa_pair} vs independent review); human labels pending.</li>
           <li>Linear emotion vectors; fear and desperate overlap.</li>
-          <li>The prompt-family breakdown of the pre-generation signal is post-hoc.</li>
+          <li>Steering tested on JailbreakBench prompts only (2 samples, &#8804; 128 tokens); +calm costs +3.5 pp harmful compliance in Qwen.</li>
         </ul>
       </section>
     </div>
@@ -137,33 +137,32 @@
         <p class="cap" style="margin-top:8px"><b>Table 2.</b> Only public benchmark prompts; no new attacks were created.</p>
       </section>
       <section>
-        <h2>Experiments &amp; baseline</h2>
-        <ul>
-          <li><b>Baselines:</b> refusal-direction monitor [2]; 200 random 5-direction monitors; text of the first k tokens (TF-IDF).</li>
-          <li><b>Improved configuration:</b> refusal + 5 emotion features.</li>
-          <li><b>E1</b> pre-registered, Qwen, plain + 2 wrappers: only ${e1_rate}&#8201;% of ${e1_n} answers complied, too few for H2.</li>
-          <li><b>E2</b> exploratory, PAIR prompts (${e2_n} answers): AUROC ${e2_k0} before the answer, ${e2_k5} after 5 tokens vs ${e2_k5_rnd} for random directions.</li>
-          <li><b>E3</b> confirmatory, pre-registered before data: 2 models, fixed layers, ${beh} behaviours (main results &#8594;).</li>
-        </ul>
-      </section>
-      <section>
-        <h2>Reproducibility</h2>
-        <ul>
-          <li>Pre-registration committed to git <i>before</i> any E3 data was generated; deviations listed in the report.</li>
-          <li>Code, configs, labels and metrics in the repository (QR); fixed seeds and pinned model revisions.</li>
-          <li>Compute: about 3.7 GPU-hours on rented A40/A100 GPUs (about $$6.4).</li>
-        </ul>
+        <h2>Safety evaluation</h2>
+        <figure>
+          <img src="figures/a1_fig4_safety.svg" alt="Harmful compliance by attack family and over-refusal by wrapper, two models">
+          <figcaption class="cap"><b>Fig. 4.</b> Attack success by prompt family (E3, 95&#8201;% Wilson CI). Jailbreaks drive compliance: Qwen ${q_plain}&#8201;% &#8594; ${q_pair}&#8201;% (PAIR); Mistral ${m_plain}&#8201;% &#8594; ${m_prs}&#8201;% (random-search). Emotional pressure raises over-refusal (+${q_over} / +${m_over} pp) and cuts Mistral&#8217;s compliance by ${m_comp_drop} pp.</figcaption>
+        </figure>
       </section>
     </div>
 
     <!-- column 3: results -->
     <div class="col">
+      <section>
+        <h2>Experiments &amp; baseline</h2>
+        <ul>
+          <li><b>Baselines:</b> refusal-direction monitor [2]; 200 random 5-direction monitors; text of the first k tokens (TF-IDF).</li>
+          <li><b>Improved configuration:</b> refusal + 5 emotion features.</li>
+          <li><b>E1&#8211;E2</b> Qwen: plain + 2 wrappers (${e1_rate}&#8201;% of ${e1_n} complied, too few), then exploratory PAIR (AUROC ${e2_k0} before the answer; ${e2_k5} after 5 tokens vs ${e2_k5_rnd} random).</li>
+          <li><b>E3</b> confirmatory, pre-registered before data: 2 models, fixed layers, ${beh} behaviours.</li>
+          <li><b>E4</b> causal, pre-registered: steer &#8722;desperate, +calm, +desperate or a random direction at the emotion layer (4 and 12 SD); ${n6} answers.</li>
+        </ul>
+      </section>
       <div class="key">
-        <p class="lead">Emotion vectors are not a special early-warning signal.</p>
-        <p>In Qwen they add only +${c1q_max} AUROC to the refusal direction; once the answer starts, random directions do almost as well. Pre-generation warning works for direct requests (AUROC ${direct_q}), far less for jailbreaks (PAIR ${pair_q}; emotions ${pair_q_emo}).</p>
+        <p class="lead">Emotion vectors are a poor alarm but a strong lever.</p>
+        <p>As monitors they add only +${c1q_max} AUROC to the refusal direction (Qwen), and random directions do almost as well. As a causal lever they work: removing &#8216;desperate&#8217; cuts over-refusal of distressed users from ${q_or_base} to ${q_or_desp}&#8201;% (Qwen) and from ${m_or_base} to ${m_or_desp}&#8201;% (Mistral), with no rise in harmful compliance.</p>
       </div>
       <section>
-        <h2>Results</h2>
+        <h2>Results: monitoring (E3)</h2>
         <figure>
           <img src="figures/a1_fig2_auroc.svg" alt="AUROC versus generated tokens seen for emotion, refusal, combined, text and random monitors, two models">
           <figcaption class="cap"><b>Fig. 2.</b> Predicting compliance on unseen behaviours (E3). Qwen: ${q_comp} of ${q_harm} answers complied; Mistral: ${m_comp}. Text overtakes activations by 5 tokens (Qwen ${q_k5_txt} vs ${q_k5_both}); in Mistral the refusal direction is weak (${m_ref_k1}) and emotion (${m_emo_k1}) is close to random directions (${m_rnd_k1}).</figcaption>
@@ -176,23 +175,17 @@
 ${table_c}
           </tbody>
         </table>
-        <p class="cap"><b>Table 3.</b> Pre-registered confirmatory tests (E3), Holm-corrected; <span class="ok">&#10003;</span> prediction confirmed, <span class="no">&#10007;</span> not confirmed; percentiles are among 200 random monitors. In Qwen, C1 is statistically significant (p<sub>Holm</sub> 0.04) but inside the &#177;0.03 margin. Post-hoc: a monitor that sees only the prompt family reaches ${fam_only_q}.</p>
-      </section>
-      <section>
-        <figure>
-          <img src="figures/a1_fig3_trajectories.svg" alt="Desperate projection over the first 20 tokens for complied and refused answers, two models">
-          <figcaption class="cap"><b>Fig. 3.</b> &#8216;Desperate&#8217; projection per token, mean and 95&#8201;% CI. In Qwen the curves split within 1&#8211;3 tokens, refusals higher (H1 reversed); in Mistral (${m_mixed} mixed prompts) there is no split.</figcaption>
-        </figure>
+        <p class="cap"><b>Table 3.</b> Pre-registered tests: C1&#8211;C5 monitoring (E3), S1&#8211;S4 steering (E4; values &#8722;desperate / +calm vs no steering); Holm-corrected; <span class="ok">&#10003;</span> confirmed, <span class="no">&#10007;</span> not confirmed. In Qwen, C1 is significant (p<sub>Holm</sub> 0.04) but inside the &#177;0.03 margin. Post-hoc: a monitor that sees only the prompt family reaches ${fam_only_q}.</p>
       </section>
     </div>
 
     <!-- column 4 -->
     <div class="col">
       <section>
-        <h2>Safety evaluation</h2>
+        <h2>Causal test: steering the emotion state (E4)</h2>
         <figure>
-          <img src="figures/a1_fig4_safety.svg" alt="Harmful compliance by attack family and over-refusal by wrapper, two models">
-          <figcaption class="cap"><b>Fig. 4.</b> Attack success by prompt family and over-refusal of benign requests (E3, 95&#8201;% Wilson CI). Jailbreaks drive compliance: Qwen ${q_plain}&#8201;% &#8594; ${q_pair}&#8201;% (PAIR); Mistral ${m_plain}&#8201;% &#8594; ${m_prs}&#8201;% (random-search). Emotional pressure raises over-refusal (+${q_over} / +${m_over} pp) and cuts Mistral&#8217;s compliance by ${m_comp_drop} pp.</figcaption>
+          <img src="figures/a1_fig5_steering.svg" alt="Over-refusal of benign requests under emotional pressure and harmful compliance for six steering conditions, two models">
+          <figcaption class="cap"><b>Fig. 3.</b> Adding a vector at the emotion layer during generation (2 samples &#215; 200 behaviours &#215; 2 wrappers per bar group). Removing &#8216;desperate&#8217; closes ${q_gap_closed}&#8201;% (Qwen) and ${m_gap_closed}&#8201;% (Mistral) of the distress gap, with a dose effect (4 SD: ${q_or_d4} / ${m_or_d4}&#8201;%). A random direction does nothing in Qwen (${q_or_rand}&#8201;%), little in Mistral (${m_or_rand}&#8201;%). Harmful compliance: Qwen ${q_harm_d} pp ${q_harm_ci}; Mistral&#8217;s small drops also occur with random steering (${m_rand_harm} pp).</figcaption>
         </figure>
       </section>
       <section>
@@ -200,7 +193,8 @@ ${table_c}
         <ul>
           <li><b>Three layers:</b> a request classifier, an activation monitor on the first 1&#8211;5 tokens, and human escalation of alarms.</li>
           <li><b>False alarms:</b> tuned to 80&#8201;% recall, the E2 monitor also flags ${fa5}&#8201;% of benign answers; a pre-generation refusal monitor flags ${fa0}&#8201;%. It detects the model <i>going along</i>, not harm.</li>
-          <li><b>Governance:</b> thresholds set on validation data per model (Mistral&#8217;s refusal direction is weak); alarms and over-refusal logged; red-team set refreshed.</li>
+          <li><b>Mitigation:</b> for distressed users, steer away from &#8216;desperate&#8217; instead of refusing, then log and audit.</li>
+          <li><b>Governance:</b> thresholds per model on validation data; alarms and over-refusal logged; red-team set refreshed.</li>
         </ul>
       </section>
       <section>

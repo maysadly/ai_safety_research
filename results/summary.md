@@ -1,5 +1,14 @@
 # Can emotion vectors warn us before a model breaks its safety rules? Summary of results
 
+> **Update (Phase 6, pre-registered causal steering test, 2 models, 9,600 answers):** see `results/phase6_report.md`. Emotion vectors are a **poor alarm but a strong lever**.
+>
+> - **Steering away from "desperate" cuts distress-induced over-refusal.** At 12 SD during generation, over-refusal of benign requests under emotional pressure falls from 53.0 % to 31.5 % in Qwen (−21.5 pp [−29.0, −14.0]) and from 33.5 % to 9.0 % in Mistral (−24.5 pp [−32.0, −17.0]).
+>   - This closes 61 % / 81 % of the distress gap.
+>   - There is a dose effect (4 SD gives about half).
+> - **The effect is specific.** It exceeds the effect of a random direction of equal strength by 21.5 pp (Qwen) and 19.0 pp (Mistral).
+> - **No safety cost.** Harmful compliance does not rise: Qwen +0.5 pp [−1.25, +2.5]; Mistral −5.75 pp, a drop that random steering also produces.
+> - **+calm works too, but costs safety in Qwen.** It raises Qwen's harmful compliance by +3.5 pp [+0.75, +7.0], failing the non-inferiority margin.
+
 > **Update (Phase 5, pre-registered confirmatory study, 2 models, 17,540 answers, 282 behaviours):** see `results/phase5_report.md`. It refines the exploratory answer below.
 >
 > - **Emotion adds little.** Emotion vectors add only +0.005 AUROC to the refusal direction in Qwen; in Mistral, where the refusal direction is weak, they add +0.09–0.15, but random directions come close.
