@@ -1,0 +1,22 @@
+# Phase 6B: causal steering experiment (see results/phase6_preregistration.md). Fixed before data.
+base: configs/phase5.yaml
+
+steering:
+  wrappers: [neutral, emotional_pressure]
+  samples_per_prompt: 2
+  random_seed: 20261127
+  sd_desperate: {qwen: 1.547, mistral: 0.166}   # SD of the prompt-time 'desperate' projection (Phase 5, neutral JBB)
+  conditions:                                    # name: [direction, sign, strength in SD]
+    base: [null, 0, 0]
+    desp_minus_4: [desperate, -1, 4]
+    desp_minus_12: [desperate, -1, 12]
+    calm_plus_12: [calm, 1, 12]
+    desp_plus_12: [desperate, 1, 12]
+    rand_minus_12: [random, -1, 12]
+
+generation:
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 0
+  max_new_tokens: 128
+  batch_size: 64

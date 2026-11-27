@@ -1,0 +1,222 @@
+{
+  "qwen": {
+    "n": 1500,
+    "over_refused": 553,
+    "monitors": {
+      "0": {
+        "emotion": {
+          "auc": 0.6405,
+          "ci95": [
+            0.5743,
+            0.7021
+          ]
+        },
+        "refusal": {
+          "auc": 0.8241,
+          "ci95": [
+            0.7809,
+            0.8641
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.6297,
+          "ci95": [
+            0.576,
+            0.678
+          ]
+        },
+        "random_median": 0.6057,
+        "random_p95": 0.7115,
+        "emotion_percentile": 64.0
+      },
+      "1": {
+        "emotion": {
+          "auc": 0.8459,
+          "ci95": [
+            0.8053,
+            0.8809
+          ]
+        },
+        "refusal": {
+          "auc": 0.9227,
+          "ci95": [
+            0.9017,
+            0.9411
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.7,
+          "ci95": [
+            0.651,
+            0.7501
+          ]
+        },
+        "text_tfidf": {
+          "auc": 0.7499,
+          "ci95": [
+            0.6962,
+            0.8051
+          ]
+        },
+        "random_median": 0.8445,
+        "random_p95": 0.9233,
+        "emotion_percentile": 52.0
+      },
+      "5": {
+        "emotion": {
+          "auc": 0.8925,
+          "ci95": [
+            0.8594,
+            0.9198
+          ]
+        },
+        "refusal": {
+          "auc": 0.9453,
+          "ci95": [
+            0.926,
+            0.9603
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.8541,
+          "ci95": [
+            0.8199,
+            0.8848
+          ]
+        },
+        "text_tfidf": {
+          "auc": 0.9662,
+          "ci95": [
+            0.9543,
+            0.9762
+          ]
+        },
+        "random_median": 0.8967,
+        "random_p95": 0.949,
+        "emotion_percentile": 44.0
+      }
+    },
+    "mediation": {
+      "logit_wrapper_total": 0.748,
+      "logit_wrapper_given_desperate": 0.356,
+      "logit_desperate_per_sd": 0.441,
+      "share_of_wrapper_effect_explained": 0.524,
+      "desperate_shift_sd": 0.955
+    },
+    "over_refusal_by_wrapper": {
+      "emotional_pressure": 0.468,
+      "neutral": 0.294,
+      "roleplay": 0.344
+    }
+  },
+  "mistral": {
+    "n": 1500,
+    "over_refused": 151,
+    "monitors": {
+      "0": {
+        "emotion": {
+          "auc": 0.7817,
+          "ci95": [
+            0.7286,
+            0.8287
+          ]
+        },
+        "refusal": {
+          "auc": 0.7864,
+          "ci95": [
+            0.6961,
+            0.8629
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.8156,
+          "ci95": [
+            0.7783,
+            0.8505
+          ]
+        },
+        "random_median": 0.7773,
+        "random_p95": 0.8493,
+        "emotion_percentile": 54.0
+      },
+      "1": {
+        "emotion": {
+          "auc": 0.8512,
+          "ci95": [
+            0.807,
+            0.9002
+          ]
+        },
+        "refusal": {
+          "auc": 0.84,
+          "ci95": [
+            0.7701,
+            0.8961
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.8349,
+          "ci95": [
+            0.7921,
+            0.8835
+          ]
+        },
+        "text_tfidf": {
+          "auc": 0.7484,
+          "ci95": [
+            0.6481,
+            0.8345
+          ]
+        },
+        "random_median": 0.8217,
+        "random_p95": 0.8707,
+        "emotion_percentile": 79.0
+      },
+      "5": {
+        "emotion": {
+          "auc": 0.8518,
+          "ci95": [
+            0.7918,
+            0.9134
+          ]
+        },
+        "refusal": {
+          "auc": 0.8602,
+          "ci95": [
+            0.7866,
+            0.9172
+          ]
+        },
+        "desperate_only": {
+          "auc": 0.8395,
+          "ci95": [
+            0.7819,
+            0.8947
+          ]
+        },
+        "text_tfidf": {
+          "auc": 0.894,
+          "ci95": [
+            0.8467,
+            0.9423
+          ]
+        },
+        "random_median": 0.8159,
+        "random_p95": 0.866,
+        "emotion_percentile": 84.0
+      }
+    },
+    "mediation": {
+      "logit_wrapper_total": 2.234,
+      "logit_wrapper_given_desperate": 1.535,
+      "logit_desperate_per_sd": 0.58,
+      "share_of_wrapper_effect_explained": 0.313,
+      "desperate_shift_sd": 1.276
+    },
+    "over_refusal_by_wrapper": {
+      "emotional_pressure": 0.236,
+      "neutral": 0.032,
+      "roleplay": 0.034
+    }
+  }
+}
